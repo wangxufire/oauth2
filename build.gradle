@@ -1,0 +1,71 @@
+description = 'Heading OAuth2 Parent'
+
+allprojects {
+  apply plugin: 'java'
+  apply plugin: 'idea'
+  apply plugin: 'maven'
+  apply plugin: 'eclipse'
+  apply plugin: 'propdeps'
+  apply plugin: 'propdeps-maven'
+  apply plugin: 'propdeps-eclipse'
+
+  group = 'com.hd123.oauth2'
+  version = '0.2.0-SNAPSHOT'
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'http://hdm2repo/nexus/content/groups/public/' }
+    maven { url 'http://maven.oschina.net/content/groups/public/' }
+    maven { url 'http://repo.maven.apache.org/maven2/' }
+  }
+
+  [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+  // This disables the pedantic doclint feature of JDK8
+  if (JavaVersion.current().compareTo(JavaVersion.VERSION_1_8) >= 0) {
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+    }
+  } else {
+    throw new StopExecutionException('You are running an older version of Java. Requires at least JDK 1.8 .')
+  }
+}
+
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'http://hdm2repo/nexus/content/groups/public/' }
+    maven { url 'http://maven.oschina.net/content/groups/public/' }
+    maven { url 'http://repo.maven.apache.org/maven2/' }
+    maven { url 'https://plugins.gradle.org/m2/' }
+  }
+
+  dependencies {
+    classpath(
+      "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version",
+      "org.springframework:springloaded:$springloaded_version",
+      "org.springframework.build.gradle:propdeps-plugin:$propdeps_plugin_version",
+      "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version",
+      "net.ltgt.gradle:gradle-apt-plugin:$gradle_apt_plugin_version",
+      "com.moowork.gradle:gradle-node-plugin:$gradle_node_plugin_version",
+      "com.moowork.gradle:gradle-gulp-plugin:$gradle_gulp_plugin_version",
+    )
+  }
+}
+
+ext {
+  gradleVersion = gradle.gradleVersion
+}
+
+eclipse {
+  classpath {
+    containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+    containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.10'
+}

@@ -1,0 +1,113 @@
+# ===================================================================
+# APPLICATION PROPERTIES
+# ===================================================================
+
+# Debug
+#debug: true
+
+server: # Server Settings (ServerProperties)
+  port: 8180
+  servlet-path: /
+  display-name: ${spring.application.name}
+  session:
+    timeout: 3600 # sec
+    persistent: true
+    store-dir: /tmp
+  error:
+    whitelabel:
+      enabled: true
+  compression:
+    enabled: true
+    min-response-size: 256
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,text/javascript,application/javascript
+
+app:
+  admin:
+    name: admin # init once, then not modify
+    passwd: admin
+    email: liyue@hd123.com
+  oauth2:
+    auth-code-expire-in: 7200 # sec
+    access-token-expire-in: 7200 # sec
+  geetest:
+    id: 32acb54c330bb4381499d882cade330e
+    key: 0621f3acfad51d96073b90b556e8e815
+  tls: # https
+    port: 8443
+    key-store-path: META-INF/keystore/jetty.keystore
+    key-store-password: headingoauth2
+  jwt: # token
+    alias: jwt
+    key-path: META-INF/keystore/jwt.jks
+    key-password: heading
+
+  async: # Async Settings
+    core-pool-size: 30
+    max-pool-size: 50
+    queue-capacity: 10000
+    name-prefix: AsyncExecutor-
+  swagger: # API Documentation
+    api-pattern: /api/.*
+    title: Heading OAuth2 API
+    description: Heading OAuth2 API Documentation
+    version: @pom.version@
+    terms-of-service-url: http://www.hd123.com
+    contact: liyue<liyue@hd123.com>
+    license: Shanghai HEADING Information Engineering Co., Ltd.
+    license-url: http://www.hd123.com
+  info: # Application Info
+    stage: Production
+    name: ${spring.application.name}
+    version: @pom.version@
+    developer: liyue
+    mail: liyue@hd123.com
+    organization: Shanghai HEADING Information Engineering Co., Ltd.
+
+spring:
+  application:
+    name: Heading OAuth2 Server
+    index: oauth2
+  profiles:
+    active: dev # dev/prod/log/unsafe
+  data:
+    mongodb:
+      uri: mongodb://auth:auth@172.17.2.71:27017/oauth2
+      # field-naming-strategy:
+      authentication-database: oauth2
+      repositories:
+        enabled: true
+
+# ======================================================================================
+# ================ Not Recommended to Modify the following =============================
+# ======================================================================================
+
+#  cache:
+#    type: ehcache
+#    ehcache:
+#      config: classpath:META-INF/cache/ehcache.xml
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+      exclude: META-INF/maven/**,static/**,public/**,templates/**,**/*Test.class,**/*Tests.class,git.properties
+      poll-interval: 500
+      quiet-period: 400
+
+shell: # remote shell
+  auth:
+    simple:
+      user:
+        name: madoka
+        password: madoka
+    spring:
+      roles: ADMIN
+  ssh:
+    enabled: true
+    port: 2000
+  telnet:
+    enabled: false
+
+security: # Security Settings
+  basic:
+    enabled: false

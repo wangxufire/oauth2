@@ -1,0 +1,33 @@
+apply plugin: 'spring-boot'
+
+dependencies {
+  compile(
+    'org.springframework.boot:spring-boot-devtools',
+    'org.springframework.boot:spring-boot-starter-actuator'
+  )
+  // compile 'org.springframework.boot:spring-boot-starter-remote-shell'
+}
+
+bootRun {
+  addResources = true
+  args = ['--spring.profiles.active=dev']
+}
+
+processResources {
+  filesMatching('**/log4j2.yaml') {
+    filter {
+      it.replace('@log.level@', 'DEBUG')
+    }
+  }
+  filesMatching('**/application.yaml') {
+    filter {
+      it.replace('@pom.version@', version)
+    }
+  }
+}
+
+task setProdProp(dependsOn: bootRun) << {
+  doFirst {
+    System.setProperty('spring.profiles.active', 'dev')
+  }
+}

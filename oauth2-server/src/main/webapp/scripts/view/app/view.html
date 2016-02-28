@@ -1,0 +1,39 @@
+<div class="page-header" ng-model="addHeader">
+  <h1>查看</h1>
+</div>
+
+<div class="row">
+  <div class="col-lg-10">
+    <form role="form" name="auditForm" novalidate>
+      <div class="form-group">
+        <label class="control-label" for="appName">应用名</label>
+        <input name="appName" class="form-control" type="text" readonly
+               ng-value="app.appName">
+
+        <div class="form-group">
+          <label class="control-label" for="productName">绑定产品</label>
+          <input name="productName" class="form-control" readonly
+                 ng-value="app.bindProduct">
+        </div>
+
+        <div class="form-group">
+          <label class="control-label" for="appScope">申请授权的接口</label>
+          <div name="appScope" ng-repeat="productScope in productScopes">
+            <input id={{productScope.right}} type="checkbox" ng-model="checked" disabled="disabled"
+                   ng-checked="check(productScope.left)">{{productScope.right}}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="button" class="btn btn-primary btn-lg"
+                ng-click="audit()" ng-disabled="app.state=='audited'">
+          审核
+        </button>
+        <button type="button" ng-click="cancel()" class="btn btn-default btn-lg">
+          取消
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

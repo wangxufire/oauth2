@@ -1,0 +1,3 @@
+rootProject.name = 'oauth2-parent'
+
+include 'oauth2-provider','oauth2-server','oauth2-server-dist'

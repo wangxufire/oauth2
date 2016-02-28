@@ -1,0 +1,93 @@
+<div class="page-header" ng-model="addHeader">
+  <h1>Heading OAuth2</h1>
+</div>
+
+<div ng-show="login">
+  <span class="label label-info">应用<small>{{app.appName}}</small>请求接入开放数据平台</span>
+</div>
+
+<div class="row" name="authinfo" ng-hide="login">
+  <div class="col-lg-10">
+    <form role="form" ng-submit="submit()" name="authForm" novalidate>
+      <div class="form-group"
+           ng-class="{'has-error':authForm.appid.$invalid && authForm.appid.$touched}">
+        <label class="control-label" for="appid">应用Id</label>
+        <input name="appid" class="form-control" type="text"
+               placeholder="应用Id" ng-model="appid" ng-required="true">
+        <div class="help-block" ng-messages="authForm.appid.$error" ng-if="authForm.appid.$touched">
+          <p ng-message="required">应用Id不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group"
+           ng-class="{'has-error':authForm.redirectUrl.$invalid && authForm.redirectUrl.$touched}">
+        <label class="control-label" for="redirectUrl">回调地址</label>
+        <input name="redirectUrl" class="form-control" type="text"
+               placeholder="回调地址" ng-model="redirectUrl" ng-required="true">
+        <div class="help-block" ng-messages="authForm.redirectUrl.$error"
+             ng-if="authForm.redirectUrl.$touched">
+          <p ng-message="required">回调地址不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="button" ng-disabled="authForm.$invalid" ng-click="auth()"
+                class="btn btn-primary btn-lg">
+          提交
+        </button>
+        <button type="button" ng-click="cancel()" class="btn btn-default btn-lg">
+          取消
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row" name="logininfo" ng-show="login">
+  <div class="col-lg-10">
+    <form class="form-horizontal" role="form" ng-submit="submit()" name="loginForm" novalidate>
+      <div class="form-group"
+           ng-class="{'has-error':loginForm.username.$invalid && loginForm.username.$touched}">
+        <label class="col-sm-4 control-label" for="username">用户名</label>
+        <div class="col-sm-4">
+          <input name="username" class="form-control" type="text"
+                 placeholder="用户名" ng-model="user.username" ng-required="true">
+        </div>
+        <div class="help-block" ng-messages="loginForm.username.$error"
+             ng-if="loginForm.username.$touched">
+          <p ng-message="required">用户名不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group"
+           ng-class="{'has-error':loginForm.password.$invalid && loginForm.password.$touched}">
+        <label class="col-sm-4 control-label" for="password">密码</label>
+        <div class="col-sm-4">
+          <input name="password" class="form-control" type="password"
+                 placeholder="密码" ng-model="user.password" ng-required="true">
+        </div>
+        <div class="help-block" ng-messages="loginForm.password.$error"
+             ng-if="loginForm.password.$touched">
+          <p ng-message="required">密码不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label">验证码</label>
+        <div id="div_id_embed" class="col-sm-4"></div>
+        <script src="//api.geetest.com/get.php?callback=gtcallback" type="text/javascript"></script>
+        <div class="help-block" ng-if="incorrect">
+          <p><font color="#A94442">验证码不正确</font></p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-8">
+          <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-primary btn-lg">
+            登录并授权
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

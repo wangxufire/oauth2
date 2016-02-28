@@ -1,0 +1,107 @@
+<div class="page-header" ng-model="addHeader">
+  <h1>Heading OAuth2</h1>
+</div>
+
+<div class="row" ng-show="auth">
+  <div class="col-lg-10">
+    <form class="form-horizontal" role="form" ng-submit="submit()" novalidate>
+      <div class="form-group"
+           ng-class="{'has-error':postForm.appid.$invalid && postForm.appid.$touched}">
+        <label class="col-sm-4 control-label" for="appid">应用Id</label>
+        <div class="col-sm-7">
+          <input name="appid" class="form-control" type="text"
+                 placeholder="应用Id" ng-model="appid" ng-required="true">
+        </div>
+        <div class="help-block" ng-messages="postForm.appid.$error" ng-if="postForm.appid.$touched">
+          <p ng-message="required">应用Id不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group"
+           ng-class="{'has-error':postForm.appSecret.$invalid && postForm.appSecret.$touched}">
+        <label class="col-sm-4 control-label" for="appSecret">应用Secret</label>
+        <div class="col-sm-7">
+          <input name="appSecret" class="form-control" type="text"
+                 placeholder="应用Secret" ng-model="appSecret" ng-required="true">
+        </div>
+        <div class="help-block" ng-messages="postForm.appSecret.$error"
+             ng-if="postForm.appSecret.$touched">
+          <p ng-message="required">应用Secret不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="grantType">grant_type</label>
+        <div class="col-sm-7">
+          <input name="grantType" class="form-control" type="text"
+                 placeholder="授权类型" value="authorization_code" readonly>
+        </div>
+      </div>
+
+      <div class="form-group"
+           ng-class="{'has-error':postForm.code.$invalid && postForm.code.$touched}">
+        <label class="col-sm-4 control-label" for="code">授权码</label>
+        <div class="col-sm-7">
+          <input name="code" class="form-control" type="text"
+                 placeholder="授权码" ng-model="code" ng-required="true">
+        </div>
+        <div class="help-block" ng-messages="postForm.code.$error" ng-if="postForm.code.$touched">
+          <p ng-message="required">授权码不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label" for="redirectUrl" ng-if="false">回调地址</label>
+        <div class="col-sm-7">
+          <input name="redirectUrl" class="form-control" type="hidden"
+                 placeholder="回调地址" ng-model="redirectUrl" value="http://foo.com">
+        </div>
+        <div class="help-block" ng-messages="postForm.redirectUrl.$error"
+             ng-if="postForm.redirectUrl.$touched">
+          <p ng-message="required">回调地址不能为空</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-8">
+          <button type="submit" ng-disabled="postForm.$invalid" class="btn btn-primary btn-lg">
+            提交
+          </button>
+          <button type="button" ng-click="cancel()" class="btn btn-default btn-lg">
+            取消
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row" ng-if="!auth">
+  <div class="col-lg-12">
+    <form class="form-horizontal" role="form" novalidate>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="accessToken">access_token</label>
+        <div class="col-sm-9">
+          <input name="accessToken" class="form-control" type="text"
+                 ng-value="data.access_token" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="refreshToken">refresh_token</label>
+        <div class="col-sm-9">
+          <input name="refreshToken" class="form-control" type="text"
+                 ng-value="data.refresh_token" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="expiresIn">expires_in</label>
+        <div class="col-sm-9">
+          <input name="expiresIn" class="form-control" type="text"
+                 ng-value="data.expires_in" readonly>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

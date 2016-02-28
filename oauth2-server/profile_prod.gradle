@@ -1,0 +1,25 @@
+apply plugin: 'spring-boot'
+
+bootRun {
+  addResources = false
+  args = ['--spring.profiles.active=prod']
+}
+
+processResources {
+  filesMatching('**/log4j2.yaml') {
+    filter {
+      it.replace('@log.level@', 'INFO')
+    }
+  }
+  filesMatching('**/application.yaml') {
+    filter {
+      it.replace('@pom.version@', version)
+    }
+  }
+}
+
+task setProdProp(dependsOn: bootRun) << {
+  doFirst {
+    System.setProperty('spring.profiles.active', 'prod')
+  }
+}

@@ -1,0 +1,10 @@
+
+
+  ${AnsiColor.GREEN}db   db d88888b  .d8b.  ${AnsiColor.RED}d8888b. ${AnsiColor.GREEN}d888888b d8b   db  d888b       ${AnsiColor.BLUE} .d88b.   .d8b.  db    db d888888b db   db .d888b.      ${AnsiColor.YELLOW}.d8888. d88888b d8888b. db    db d88888b d8888b.
+  ${AnsiColor.GREEN}88   88 88'     d8' `8b ${AnsiColor.RED}88  `8D ${AnsiColor.GREEN}  `88'   888o  88 88' Y8b      ${AnsiColor.BLUE}.8P  Y8. d8' `8b 88    88 `~~88~~' 88   88 VP  `8D      ${AnsiColor.YELLOW}88'  YP 88'     88  `8D 88    88 88'     88  `8D
+  ${AnsiColor.GREEN}88ooo88 88ooooo 88ooo88 ${AnsiColor.RED}88   88 ${AnsiColor.GREEN}   88    88V8o 88 88           ${AnsiColor.BLUE}88    88 88ooo88 88    88    88    88ooo88    odD'      ${AnsiColor.YELLOW}`8bo.   88ooooo 88oobY' Y8    8P 88ooooo 88oobY'
+  ${AnsiColor.GREEN}88~~~88 88~~~~~ 88~~~88 ${AnsiColor.RED}88   88 ${AnsiColor.GREEN}   88    88 V8o88 88  ooo      ${AnsiColor.BLUE}88    88 88~~~88 88    88    88    88~~~88  .88'        ${AnsiColor.YELLOW}  `Y8b. 88~~~~~ 88`8b   `8b  d8' 88~~~~~ 88`8b
+  ${AnsiColor.GREEN}88   88 88.     88   88 ${AnsiColor.RED}88  .8D ${AnsiColor.GREEN}  .88.   88  V888 88. ~8~      ${AnsiColor.BLUE}`8b  d8' 88   88 88b  d88    88    88   88 j88.         ${AnsiColor.YELLOW}db   8D 88.     88 `88.  `8bd8'  88.     88 `88.
+  ${AnsiColor.GREEN}YP   YP Y88888P YP   YP ${AnsiColor.RED}Y8888D' ${AnsiColor.GREEN}Y888888P VP   V8P  Y888P       ${AnsiColor.BLUE} `Y88P'  YP   YP `Y8888P'    YP    YP   YP 888888D      ${AnsiColor.YELLOW}`8888Y' Y88888P 88   YD    YP    Y88888P 88   YD
+
+    ${AnsiColor.BRIGHT_YELLOW}:: Heading OAuth2 Server (v${app.info.version}) :: ${AnsiColor.RED}[developer : liyue]${AnsiColor.BRIGHT_GREEN} :: Running With Spring Boot ${spring-boot.formatted-version} ::

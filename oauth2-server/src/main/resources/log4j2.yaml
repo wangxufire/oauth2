@@ -1,0 +1,80 @@
+Configutation:
+  Name: Heading OAuth2 Server Logger Configutation
+  Status: ERROR # DEBUG
+  MonitorInterval: 60
+
+  Properties:
+    property:
+    - name: logHome
+      value: /var/log
+    - name: appName
+      value: oauth2-server
+
+  Appenders:
+    Console:
+    - name: STDOUT
+      target: SYSTEM_OUT
+      follow: false
+      Filters:
+        LevelRangeFilter:
+        - minLevel: FATAL
+          maxLevel: WARN
+          onMatch: DENY
+          onMismatch: NEUTRAL
+        - minLevel: INFO
+          maxLevel: TRACE
+          onMatch: ACCEPT
+          onMismatch: DENY
+      PatternLayout:
+        pattern: "%red{%d{HH:mm:ss.SSS}} %yellow{[%t]} %style{ %-5p }{reverse,blue} %green{%c{1.}} %m%n"
+    - name: STDERR
+      target: SYSTEM_ERR
+      follow: false
+      Filters:
+        LevelRangeFilter:
+        - minLevel: INFO
+          maxLevel: TRACE
+          onMatch: DENY
+          onMismatch: NEUTRAL
+        - minLevel: FATAL
+          maxLevel: WARN
+          onMatch: ACCEPT
+          onMismatch: DENY
+      PatternLayout:
+        pattern: "%red{%d{HH:mm:ss.SSS}} %yellow{[%t]} %style{ %-5p }{reverse,blue} %green{%c{1.}} %m%n"
+    RollingRandomAccessFile:
+      name: FILE
+      fileName: "${logHome}/${appName}/${appName}.log"
+      filePattern: "${logHome}/${appName}/${appName}-%d{yyyy-MM-dd}.%i.log"
+      PatternLayout:
+        pattern: "%d{ISO8601} [%t] %-5level %logger - %msg%n%throwable"
+      Policies:
+        TimeBasedTriggeringPolicy:
+          interval: 1
+          modulate: true
+        SizeBasedTriggeringPolicy:
+          size: 256 MB
+      DefaultRolloverStrategy:
+        max: 50
+        compressionLevel: 9
+
+  Loggers:
+    logger:
+    - name: com.hd123.oauth2
+      level: @log.level@
+    - name: org.springframework.web
+      level: @log.level@
+    - name: org.springframework.data.mongodb
+      level: @log.level@
+    - name: springfox
+      level: WARN
+    - name: org.bson
+      level: WARN
+    - name: org.springframework.web.servlet.handler
+      level: WARN
+    asyncRoot:
+      level: INFO
+      AppenderRef:
+      - ref: FILE
+      - ref: STDOUT
+      - ref: STDERR

@@ -1,0 +1,6 @@
+﻿├─oauth2-server.jar 可执行jar，主程序
+├─systemd linux守护进程服务脚本，由systemd管理服务
+├─Dockerfile 用于构造docker镜像
+├─config 包含项目配置文件
+├─doc 文档
+├─README.md 使用手册

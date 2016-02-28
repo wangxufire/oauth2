@@ -1,0 +1,38 @@
+archivesBaseName = 'oauth2-provider'
+description = 'Heading OAuth2 Provider'
+sourceCompatibility=1.6
+targetCompatibility=1.6
+
+dependencies {
+  optional "javax.servlet:javax.servlet-api:$javax_servlet_version"
+}
+
+jar {
+  manifest {
+    attributes(
+      'Implementation-Vendor-Id': 'com.hd123.oauth2',
+      'Implementation-Title': 'Heading OAuth2 Provider',
+      'Implementation-Version': version,
+      'Implementation-Vendor': 'Shanghai HEADING Information Engineering Co., Ltd.',
+      'Build-Jdk': JavaVersion.current().toString(),
+      'Created-By': "Gradle $gradleVersion",
+      'Built-By': 'liyue@hd123.com'
+    )
+  }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+artifacts {
+  archives jar
+  archives javadocJar
+  archives sourcesJar
+}

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.3.2.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+  <groupId>com.hd123.oauth2</groupId>
+  <artifactId>oauth2-parent</artifactId>
+  <version>0.3.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Heading OAuth2 Parent</name>
+  <description>${project.name}</description>
+
+  <modules>
+    <module>oauth2-provider</module>
+    <module>oauth2-server</module>
+    <module>oauth2-server-dist</module>
+  </modules>
+
+  <developers>
+    <developer>
+      <id>liyue</id>
+      <name>李越</name>
+      <email>liyue@hd123.com</email>
+      <organization>Shanghai HEADING Information Engineering Co., Ltd.</organization>
+      <organizationUrl>http://www.hd123.com</organizationUrl>
+      <roles>
+        <role>Framework Design</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <organization>
+    <name>Shanghai HEADING Information Engineering Co., Ltd.</name>
+    <url>http://www.hd123.com</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>Heading License</name>
+      <url>http://www.hd123.com</url>
+    </license>
+  </licenses>
+
+  <repositories>
+    <repository>
+      <id>hdm2repo</id>
+      <name>Heading Repository</name>
+      <url>http://hdm2repo/nexus/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+
+  <scm>
+    <connection>scm:git:http://172.17.2.71:3000/madoka/OAuth2.git</connection>
+    <developerConnection>scm:git:http://172.17.2.71:3000/madoka/OAuth2.git</developerConnection>
+    <url>http://172.17.2.71:3000/madoka/OAuth2</url>
+  </scm>
+
+  <issueManagement>
+    <system>GIT</system>
+    <url>http://172.17.2.71:3000/madoka/OAuth2/issues</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>http://sports/jenkins/view/hdcard/job/oauth2</url>
+  </ciManagement>
+
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>http://hdm2repo/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>http://hdm2repo/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <prerequisites>
+    <maven>3.1.0</maven>
+  </prerequisites>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
+    <start-class>com.hd123.oauth2.main.ServletInitializer</start-class>
+
+    <oltu.version>1.0.1</oltu.version>
+    <jjwt.version>0.6.0</jjwt.version>
+    <guava.version>19.0</guava.version>
+    <kotlin.version>1.0.0</kotlin.version>
+    <fastjson.version>1.2.7</fastjson.version>
+    <log4j-web.version>2.5</log4j-web.version>
+    <disruptor.version>3.3.2</disruptor.version>
+    <commons-io.version>2.4</commons-io.version>
+    <springfox.version>2.3.1</springfox.version>
+    <javax.inject.version>1</javax.inject.version>
+    <commons-lang3.version>3.4</commons-lang3.version>
+    <docker.plugin.version>0.4.1</docker.plugin.version>
+    <springloaded.version>1.2.5.RELEASE</springloaded.version>
+    <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
+    <yeoman-maven-plugin.version>0.5</yeoman-maven-plugin.version>
+    <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
+    <maven-surefire-report-plugin.version>2.19</maven-surefire-report-plugin.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>1.3.0.BUILD-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      -->
+      <!-- Apache OLTU -->
+      <dependency>
+        <groupId>org.apache.oltu.oauth2</groupId>
+        <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+        <version>${oltu.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.common</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <!-- jwt -->
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+      <!-- Guava -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <!-- JSON -->
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>${fastjson.version}</version>
+      </dependency>
+      <!-- JSR-330 -->
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
+      </dependency>
+      <!-- Common -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <!-- Required for AsyncLoggers -->
+      <dependency>
+        <groupId>com.lmax</groupId>
+        <artifactId>disruptor</artifactId>
+        <version>${disruptor.version}</version>
+      </dependency>
+      <!-- log4j2 for servlet -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-web</artifactId>
+        <version>${log4j-web.version}</version>
+      </dependency>
+      <!-- Swagger -->
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>${springfox.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagNameFormat>@{project.version}</tagNameFormat>
+            <checkModificationExcludeList>.project,.classpath,.mymetadata,.iml
+            </checkModificationExcludeList>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>

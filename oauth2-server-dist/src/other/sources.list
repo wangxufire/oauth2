@@ -1,0 +1,11 @@
+# 阿里云提供的扩展源：
+deb http://mirrors.aliyun.com/debian/ squeeze main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ squeeze-proposed-updates main non-free contrib
+deb http://mirrors.aliyun.com/debian/ wheezy main non-free contrib
+deb-src http://mirrors.aliyun.com/debian/ wheezy-proposed-updates main non-free contrib
+
+# 网易提供的扩展源：
+deb http://mirrors.163.com/debian/ squeeze main non-free contrib
+deb http://mirrors.163.com/debian/ squeeze-proposed-updates main non-free contrib
+deb-src http://mirrors.163.com/debian/ squeeze main non-free contrib
+deb-src http://mirrors.163.com/debian/ squeeze-proposed-updates main non-free contrib

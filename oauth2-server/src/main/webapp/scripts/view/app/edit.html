@@ -1,0 +1,49 @@
+<div class="page-header" ng-model="addHeader">
+  <h1 ng-if="!editPage">注册</h1>
+  <h1 ng-if="editPage">编辑</h1>
+</div>
+
+<div class="row">
+  <div class="col-lg-10">
+    <form role="form" name="postForm" novalidate>
+      <div class="form-group"
+           ng-class="{'has-error':postForm.appName.$invalid && postForm.appName.$touched}">
+        <label class="control-label" for="appName">应用名</label>
+        <input name="appName" class="form-control" type="text" placeholder="应用名"
+               ng-model="app.appName" ng-minlength="2" ng-maxlength="20" ng-required="true">
+        <div class="help-block" ng-messages="postForm.appName.$error"
+             ng-if="postForm.appName.$touched">
+          <p ng-message="required">应用名不能为空</p>
+          <p ng-message="minlength">应用名最短2位字符</p>
+          <p ng-message="maxlength">应用名最长20位字符</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label" for="productName">绑定产品</label>
+        <select name="productName" class="form-control" ng-model="selectedProduct"
+                ng-change="changeScopes(selectedProduct)"
+                ng-options="product.name for product in products"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label" for="appScope">申请授权的接口</label>
+        <div name="appScope" ng-repeat="productScope in productScopes">
+          <input id={{productScope.right}} type="checkbox" ng-model="checked"
+                 ng-init="checked=checkPush(productScope.left)"
+                 ng-click="check(productScope.left,checked)">{{productScope.right}}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="button" ng-click="save()" ng-disabled="postForm.$invalid"
+                class="btn btn-primary btn-lg">
+          保存
+        </button>
+        <button type="button" ng-click="cancel()" class="btn btn-default btn-lg">
+          取消
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

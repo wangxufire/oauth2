@@ -1,0 +1,70 @@
+<div class="row" style="margin-top: 80px;">
+  <div class="col-md-7">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">登录</h3>
+        </div>
+        <div name="loginForm">
+          <form role="form" class="form-horizontal" name="postForm" style="padding: 25px;"
+                novalidate>
+            <div class="form-group"
+                 ng-class="{'has-error':postForm.username.$invalid && postForm.username.$touched}">
+              <label class="control-label col-md-2" for="username">用户名</label>
+              <div class="col-md-7">
+                <input name="username" class="form-control" type="text" placeholder="用户名"
+                       ng-model="username" ng-required="true">
+              </div>
+              <div class="captcha-help-block" ng-messages="postForm.username.$error"
+                   ng-if="postForm.username.$touched">
+                <p ng-message="required">用户名不能为空</p>
+              </div>
+            </div>
+
+            <div class="form-group"
+                 ng-class="{'has-error':postForm.password.$invalid && postForm.password.$touched}">
+              <label class="control-label col-md-2" for="password">密码</label>
+              <div class="col-md-7">
+                <input name="password" class="form-control" type="password" placeholder="密码"
+                       ng-model="password" ng-required="true">
+              </div>
+              <div class="help-block" ng-messages="postForm.password.$error"
+                   ng-if="postForm.password.$touched">
+                <p ng-message="required">密码不能为空</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-2">验证码</label>
+              <div id="captcha-box" class="col-md-7"></div>
+              <div id="captcha-help-block" class="help-block" style="visibility: hidden;">
+                <p><font color="#A94442">验证码不正确</font></p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-md-offset-2 col-md-7">
+                <button type="button" ng-click="login(username,password)"
+                        ng-disabled="postForm.$invalid" class="btn btn-primary btn-lg">
+                  登录
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="text-center" style="padding-top:25px; padding-bottom: 40px;">
+          <h2>还没有账户？ 现在注册</h2>
+        </div>
+        <div class="text-center" style="padding-top:40px; padding-bottom: 45px;">
+          <a class="btn btn-lg btn-success" ng-click="signup()">注册</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

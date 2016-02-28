@@ -1,0 +1,89 @@
+archivesBaseName = 'oauth2-server'
+description = 'Heading OAuth2 Server'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+apply plugin: 'spring-boot'
+defaultTasks 'bootRun'
+
+configurations {
+  all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+  all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+  all*.exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-el'
+  all*.exclude group: 'org.apache.oltu.oauth2', module: 'org.apache.oltu.oauth2.common'
+  all*.exclude group: 'org.mapstruct', module: 'mapstruct'
+}
+
+dependencies {
+  // Spring Boot Framework
+  compile(
+    'org.springframework.boot:spring-boot-starter-web',
+    'org.springframework.boot:spring-boot-starter-log4j2',
+    'org.springframework.boot:spring-boot-starter-jetty',
+    'org.springframework.boot:spring-boot-starter-data-mongodb',
+    'org.springframework.boot:spring-boot-starter-aop',
+    'org.springframework.boot:spring-boot-starter-security',
+    'org.springframework.boot:spring-boot-starter-validation',
+    'org.springframework.boot:spring-boot-starter-cache'
+  )
+  optional 'org.springframework.boot:spring-boot-configuration-processor'
+
+  compile(
+    // Spring Component
+    'org.springframework:spring-aspects',
+    'org.springframework.security.oauth:spring-security-oauth2',
+    'org.springframework.security:spring-security-jwt',
+    'org.springframework.security:spring-security-data',
+
+    // log4j2 Extra
+    // for yaml
+    'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml',
+    // for servlet
+    "org.apache.logging.log4j:log4j-web:$log4j_web_version",
+    // required for AsyncLoggers
+    "com.lmax:disruptor:$disruptor_version",
+    // Apache OLTU
+    "org.apache.oltu.oauth2:org.apache.oltu.oauth2.authzserver:$oltu_version",
+    // jwt
+    "io.jsonwebtoken:jjwt:$jjwt_version",
+    // Guava
+    "com.google.guava:guava:$guava_version",
+    // JSON
+    "com.alibaba:fastjson:$fastjson_version",
+    // ehcache
+    'net.sf.ehcache:ehcache',
+    // JSR-330
+    "javax.inject:javax.inject:$javax_inject_version",
+    // Commons
+    "org.apache.commons:commons-lang3:$commons_lang3_version",
+    "commons-io:commons-io:$commons_io_version",
+    // Swagger
+    "io.springfox:springfox-swagger2:$springfox_version"
+  )
+
+  testCompile(
+    'org.springframework.boot:spring-boot-starter-test',
+    'org.springframework.restdocs:spring-restdocs-mockmvc'
+  )
+
+  // for test
+  compile(project(':oauth2-provider'))
+}
+
+bootRepackage {
+  mainClass = 'com.hd123.oauth2.main.ServletInitializer'
+}
+
+springBoot {
+  mainClass = 'com.hd123.oauth2.main.ServletInitializer'
+  executable = true
+}
+
+if (project.hasProperty('prod')) {
+  apply from: 'profile_prod.gradle'
+} else {
+  apply from: 'profile_dev.gradle'
+}
+
+compileJava.dependsOn(processResources)

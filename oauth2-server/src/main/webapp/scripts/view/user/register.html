@@ -1,0 +1,55 @@
+<div class="page-header" ng-model="addHeader">
+  <h1>新用户注册</h1>
+</div>
+
+<div class="row">
+  <div class="col-lg-10">
+    <form role="form" name="postForm" novalidate>
+      <div class="form-group"
+           ng-class="{'has-error':postForm.username.$invalid && postForm.username.$touched}">
+        <label class="control-label" for="username">用户名</label>
+        <input name="username" class="form-control" type="text" placeholder="用户名"
+               ng-pattern="/^[a-zA-Z0-9]*$/" ng-minlength="2" ng-maxlength="20"
+               ng-model="user.username" ng-required="true">
+        <div class="help-block" ng-messages="postForm.username.$error"
+             ng-if="postForm.username.$touched">
+          <p ng-message="required">用户名不能为空</p>
+          <p ng-message="pattern">用户名不合法</p>
+          <p ng-message="minlength">用户名最短2位字符</p>
+          <p ng-message="maxlength">用户名最长20位字符</p>
+        </div>
+      </div>
+
+      <div class="form-group"
+           ng-class="{'has-error':postForm.password.$invalid && postForm.password.$touched}">
+        <label class="control-label" for="password">密码</label>
+        <input name="password" class="form-control" type="password" placeholder="密码"
+               ng-model="user.password" ng-minlength="6" ng-maxlength="18" ng-required="true">
+        <div class="help-block" ng-messages="postForm.password.$error"
+             ng-if="postForm.password.$touched">
+          <p ng-message="required">密码不能为空</p>
+          <p ng-message="minlength">密码最短6位字符</p>
+          <p ng-message="maxlength">密码最长18位字符</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">验证码</label>
+        <div id="captcha-box"></div>
+        <div id="captcha-help-block" class="help-block" style="visibility: hidden;">
+          <p><font color="#A94442">验证码不正确</font></p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button type="button" ng-click="save()" ng-disabled="postForm.$invalid"
+                class="btn btn-primary btn-lg">
+          注册
+        </button>
+        <button type="button" ng-click="cancel()" class="btn btn-default btn-lg">
+          取消
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

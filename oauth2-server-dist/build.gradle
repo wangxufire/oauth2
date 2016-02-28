@@ -1,0 +1,15 @@
+archivesBaseName = 'oauth2-server-dist'
+description = 'Heading OAuth2 Server Dist'
+
+defaultTasks 'dist'
+
+task dist(type: Zip) << {
+  from 'src/other'
+  into('libs') {
+    from configurations.runtime
+  }
+    baseName = archivesBaseName
+  destinationDir = file("${project.buildDir}")
+}
+
+compileJava.dependsOn dist

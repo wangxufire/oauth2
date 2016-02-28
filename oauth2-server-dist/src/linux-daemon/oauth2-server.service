@@ -1,0 +1,9 @@
+[Unit]
+Description=merchant-services
+After=syslog.target
+
+[Service]
+ExecStart=/usr/bin/java -jar /opt/oauth2-server.jar --spring.config.location=/opt/config/application.yaml
+
+[Install]
+WantedBy=multi-user.target
