@@ -1,4 +1,4 @@
-Heading OAth2 Server
+Heading OAth2 Server [![Build Status](https://travis-ci.org/wangxufire/oauth2.svg?branch=master)](https://travis-ci.org/wangxufire/oauth2)
 ---------------------------------------
 
 ### 授权服务器
