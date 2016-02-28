@@ -88,7 +88,7 @@ Heading OAth2 Server
 * 注释掉授权，启动服务（systemctl start mongodb.service）
 
 * 创建管理员用户:
-
+>
 > 进入mongodb
 ```shell
 mongo
