@@ -1,6 +1,8 @@
 Heading OAth2 Server
 ---------------------------------------
 
+[![Build Status](https://travis-ci.org/wangxufire/oauth2.svg?branch=master)](https://travis-ci.org/wangxufire/oauth2)
+
 ### 授权服务器
 
 　　系统启动后会根据配置文件初始化admin用户，使用admin用户登录系统，在后台维护产品信息即需要授权访问的应用，新建产品信息后需要将应用所有对外暴露的接口地址及接口名称添加到对应的产品中，接口地址将作为后续权限校验的凭证。没有被添加的接口一般情况下不会被授权调用，可在资源提供方即提供接口调用的应用通过配置filter来配置。
