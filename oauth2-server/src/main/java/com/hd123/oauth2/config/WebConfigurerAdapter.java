@@ -40,8 +40,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -79,7 +77,7 @@ import com.hd123.oauth2.util.ProfileUtil;
 
 /**
  * 自定义配置
- * 
+ *
  * @author liyue
  * @since 0.0.1
  */
@@ -94,23 +92,27 @@ public class WebConfigurerAdapter {
   public ServletContextInitializer servlet() {
     return servletContext -> {
       final EnumSet<DispatcherType> disps = of(REQUEST, FORWARD, ASYNC);
-      initStaticResourcesProductionFilter(servletContext, disps);
+      // initStaticResourcesProductionFilter(servletContext, disps);
     };
   }
 
   /**
    * Initializes the static resources production Filter.
    */
-  private void initStaticResourcesProductionFilter(ServletContext servletContext,
-      EnumSet<DispatcherType> disps) {
-    FilterRegistration.Dynamic staticResourcesProductionFilter = servletContext.addFilter(
-        "staticResourcesProductionFilter", new StaticResourcesProductionFilter());
-
-    staticResourcesProductionFilter.addMappingForUrlPatterns(disps, true, "/");
-    staticResourcesProductionFilter.addMappingForUrlPatterns(disps, true, "/index.html");
-    staticResourcesProductionFilter.addMappingForUrlPatterns(disps, true, "/scripts/*");
-    staticResourcesProductionFilter.setAsyncSupported(true);
-  }
+  // private void initStaticResourcesProductionFilter(ServletContext
+  // servletContext,
+  // EnumSet<DispatcherType> disps) {
+  // FilterRegistration.Dynamic staticResourcesProductionFilter =
+  // servletContext.addFilter(
+  // "staticResourcesProductionFilter", new StaticResourcesProductionFilter());
+  //
+  // staticResourcesProductionFilter.addMappingForUrlPatterns(disps, true, "/");
+  // staticResourcesProductionFilter.addMappingForUrlPatterns(disps, true,
+  // "/index.html");
+  // staticResourcesProductionFilter.addMappingForUrlPatterns(disps, true,
+  // "/scripts/*");
+  // staticResourcesProductionFilter.setAsyncSupported(true);
+  // }
 
   // @Bean
   // @Role(ROLE_INFRASTRUCTURE)
