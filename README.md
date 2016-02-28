@@ -88,6 +88,7 @@ Heading OAth2 Server
 * 注释掉授权，启动服务（systemctl start mongodb.service）
 
 * 创建管理员用户:
+
 > 进入mongodb
 ```shell
 mongo
@@ -152,7 +153,8 @@ db.createUser(
 
 * 打开授权，重启动服务（systemctl restart mongodb.service）
 
-* 后续操作： 
+* 后续操作：
+
 > 进入mongodb
 ```shell
 mongo
