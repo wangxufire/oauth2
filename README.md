@@ -121,6 +121,7 @@ db.createUser(
 ```
 
 * 创建应用库的用户:
+
 > 切换到应用数据库
 ```shell
 use oauth2
