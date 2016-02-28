@@ -3,4 +3,4 @@ jdk:
   - oraclejdk8
 sudo: false
 install: true
-script: ./mvnw clean install -DskipTests=true -Pdev
+script: mvn clean install -DskipTests=true -Pdev
