@@ -17,7 +17,7 @@
 *.properties text
 *.html text
 *.sh text
-*.bat text
+*.bat text eol=crlf
 *.md text
 *.txt text
 *.sql text

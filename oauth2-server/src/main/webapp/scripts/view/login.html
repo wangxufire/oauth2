@@ -26,11 +26,13 @@
               <label class="control-label col-md-2" for="password">密码</label>
               <div class="col-md-7">
                 <input name="password" class="form-control" type="password" placeholder="密码"
-                       ng-model="password" ng-required="true">
+                       ng-model="password" ng-minlength="4" ng-maxlength="18" ng-required="true">
               </div>
               <div class="help-block" ng-messages="postForm.password.$error"
                    ng-if="postForm.password.$touched">
                 <p ng-message="required">密码不能为空</p>
+                <p ng-message="minlength">密码最短6位字符</p>
+                <p ng-message="maxlength">密码最长18位字符</p>
               </div>
             </div>
 

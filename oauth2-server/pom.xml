@@ -272,6 +272,7 @@
       </activation>
       <properties>
         <log.level>DEBUG</log.level>
+        <activeProfile>dev</activeProfile>
       </properties>
       <dependencies>
         <dependency>
@@ -291,14 +292,13 @@
             <executions>
               <execution>
                 <goals>
-                  <goal>run</goal>
+                  <goal>repackage</goal>
                 </goals>
               </execution>
             </executions>
             <configuration>
               <executable>true</executable>
               <jvmArguments>-ea</jvmArguments>
-              <addResources>true</addResources>
               <arguments>
                 <argument>--spring.profiles.active=dev</argument>
               </arguments>
@@ -319,6 +319,7 @@
       <id>prod</id>
       <properties>
         <log.level>INFO</log.level>
+        <activeProfile>prod</activeProfile>
       </properties>
       <build>
         <plugins>
@@ -373,7 +374,6 @@
             <configuration>
               <executable>true</executable>
               <jvmArguments>-ea</jvmArguments>
-              <addResources>false</addResources>
               <arguments>
                 <argument>--spring.profiles.active=prod</argument>
               </arguments>
@@ -399,6 +399,7 @@
       <id>docker</id>
       <properties>
         <log.level>DEBUG</log.level>
+        <activeProfile>docker</activeProfile>
       </properties>
       <build>
         <plugins>
@@ -415,7 +416,6 @@
             <configuration>
               <executable>true</executable>
               <jvmArguments>-ea</jvmArguments>
-              <addResources>false</addResources>
               <arguments>
                 <argument>--spring.profiles.active=dev</argument>
               </arguments>

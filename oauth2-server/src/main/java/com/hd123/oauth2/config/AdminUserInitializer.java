@@ -18,7 +18,7 @@ import com.hd123.oauth2.entity.User;
 import com.hd123.oauth2.repository.specification.SpecificationModify;
 
 /**
- * 管理员用户信息
+ * 管理员用户初始化
  *
  * @author liyue
  * @since 0.0.1
@@ -34,7 +34,6 @@ public class AdminUserInitializer implements InitializingBean {
   private AppProperties appProperties;
   @Inject
   private PasswordEncoder passwordEncoder;
-
 
   @Override
   public void afterPropertiesSet() throws Exception {

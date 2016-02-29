@@ -32,7 +32,8 @@ deploy/
 .merge_file*
 local.properties
 
-# NodeJS
+# front
+/**/dist/**
 /**/node_modules/**
 /**/bower_components/**
 

@@ -28,7 +28,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
@@ -54,7 +53,6 @@ import com.hd123.oauth2.util.ProfileUtil;
 @Configuration
 @EnableWebSecurity
 @EnableResourceServer
-@EnableConfigurationProperties
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableAsync(proxyTargetClass = true, mode = ASPECTJ)
 @EnableCaching(proxyTargetClass = true, mode = ASPECTJ)
@@ -78,8 +76,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
    * Configure the application for deploy.
    *
    * @param application
-   *          Builder for {@link SpringApplication} and
-   *          {@link ApplicationContext}
+   *          application
    */
   @Override
   protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {

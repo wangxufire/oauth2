@@ -14,7 +14,7 @@ var
   ngAnnotate = require('gulp-ng-annotate'),
   ngConstant = require('gulp-ng-constant-fork'),
   jshint = require('gulp-jshint'),
-  minifyCss = require('gulp-minify-css'),
+  cleanCss = require('gulp-clean-css'),
   rev = require('gulp-rev'),
   proxy = require('proxy-middleware'),
   es = require('event-stream'),
@@ -26,7 +26,7 @@ var
   runSequence = require('run-sequence'),
   browserSync = require('browser-sync'),
   sourcemaps = require('gulp-sourcemaps'),
-//KarmaServer = require('karma').Server,
+//karmaServer = require('karma').Server,
   plumber = require('gulp-plumber'),
   changed = require('gulp-changed'),
   cache = require('gulp-cached'),
@@ -74,8 +74,9 @@ gulp.task('sass', function () {
     .pipe(plumber({errorHandler: handleErrors}))
     .pipe(changed(config.app + 'scripts/css', {extension: '.css'}))
     .pipe(sass({includePaths: config.importPath}).on('error', sass.logError))
-    .pipe(minifyCss({
-      keepSpecialComments: 0
+    .pipe(cleanCss({
+      keepSpecialComments: 0,
+      compatibility: 'ie8'
     }))
     .pipe(rename({extname: '.min.css'}))
     .pipe(gulp.dest(config.app + 'scripts/css'));
@@ -87,7 +88,7 @@ gulp.task('styles', ['sass'], function () {
 });
 
 gulp.task('install', function (done) {
-  runSequence('sass', 'wiredep', 'ngconstant:dev', done);
+  runSequence('wiredep', 'ngconstant:dev', 'sass', done);
 });
 
 gulp.task('build', function (cb) {
@@ -115,6 +116,8 @@ gulp.task('serve', function () {
       '/metrics',
       '/websocket/tracker',
       '/dump',
+      '/verifyServlet',
+      '/startCaptchaServlet',
       '/console/'
     ];
 
@@ -163,10 +166,10 @@ gulp.task('serve', function () {
 gulp.task('watch', function () {
   gulp.watch('bower.json', ['wiredep']);
   gulp.watch(['gulpfile.js', 'pom.xml'], ['ngconstant:dev']);
-  gulp.watch(config.scss + '**/*.{scss,sass}', ['styles']);
+  gulp.watch(config.scss + 'scripts/**/*.{scss,sass}', ['styles']);
   gulp.watch(config.app + 'assets/img/**', ['images']);
   gulp.watch(config.app + 'scripts/js/**/*.js', ['jshint']);
-  gulp.watch([config.app + '*.html']).on('change', browserSync.reload);
+  gulp.watch([config.app + 'scripts/view/**/*.html']).on('change', browserSync.reload);
 });
 
 gulp.task('jshint', function () {
@@ -182,15 +185,6 @@ gulp.task('jshint', function () {
 
 gulp.task('wiredep', ['wiredep:app']);
 
-//gulp.task('wiredep:app', function () {
-//  return gulp.src(config.app + 'index.html')
-//    .pipe(plumber({errorHandler: handleErrors}))
-//    .pipe(wiredep({
-//      exclude: [/angular-i18n/]
-//    }))
-//    .pipe(gulp.dest(config.app));
-//});
-
 gulp.task('wiredep:app', function () {
   var stream = gulp.src(config.app + 'index.html')
     .pipe(plumber({errorHandler: handleErrors}))
@@ -203,7 +197,6 @@ gulp.task('wiredep:app', function () {
     .pipe(wiredep({
       exclude: [
         /angular-i18n/  // localizations are loaded dynamically
-        //'bower_components/bootstrap/' // Exclude Bootstrap LESS as we use bootstrap-sass
       ],
       ignorePath: /\.\.\/webapp\/bower_components\// // remove ../webapp/bower_components/ from paths of injected sass files
     }))

@@ -208,17 +208,24 @@ db.system.users.remove({user:"weicard"})
 
 * npm install -g bower
 * npm install -g gulp
-* bower help
-* bower search
-* bower install/uninstall
 
-<p>
-package.json定义构建时的依赖及版本，在同级目录执行npm install
+<pre>
+bower用于管理前端依赖
+gulp用于前端构建，编译最小版本的js、css、html、sass等，同时去掉注释等冗余信息，并且可以实时监听变化重载。
+
+开发时需要先在package.json及bower.json所在目录执行
+
+npm install及bower install
+
+npm可能会需要较长时间，编译制品时会自动执行，需要编译服务器安装nodejs、bower、gulp
+
+package.json定义构建时的依赖及版本
 .bowerrc文件定义bower_components目录位置
 bower.json定义前端依赖及版本
 在bower.json所在目录执行bower install会自动安装依赖到bower_components下 
 gulpfile.js定义构建任务
-</p>
+</pre>
+
 ## 3、生成https证书（keytool）
 
 * 为服务器生成证书

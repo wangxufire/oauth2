@@ -41,13 +41,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -65,7 +65,10 @@ import com.google.common.base.Splitter;
  * @author liyue
  * @since 0.0.1
  */
-@Aspect @Component @Profile({DEVELOPMENT, LOGGING})
+@Aspect
+@Component
+@Profile({
+    DEVELOPMENT, LOGGING })
 @SuppressWarnings("unchecked")
 public class LoggingAspect {
 
@@ -74,15 +77,16 @@ public class LoggingAspect {
   /**
    * 环绕通知 用于拦截Controller层记录用户的操作
    *
-   * @param proJoinPoint 切点
+   * @param proJoinPoint
+   *          切点
    * @return 方法执行结果
    */
   @Around(value = "@annotation(com.hd123.oauth2.logger.ControllerLogger)")
   public Object around(ProceedingJoinPoint proJoinPoint) throws Throwable {
     notNull(proJoinPoint, "切点不能为空");
 
-    final HttpServletRequest request =
-      ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
+        .getRequestAttributes()).getRequest();
     notNull(request, "http request不能为空");
 
     final boolean isGet = logBefore(proJoinPoint, request);
@@ -96,8 +100,10 @@ public class LoggingAspect {
   /**
    * 异常通知 用于拦截service层记录异常日志
    *
-   * @param joinPoint 切点
-   * @param e         异常
+   * @param joinPoint
+   *          切点
+   * @param e
+   *          异常
    */
   @AfterThrowing(pointcut = "@annotation(com.hd123.oauth2.logger.ServiceLogger)", throwing = "e")
   public void afterThrowing(JoinPoint joinPoint, Throwable e) {
@@ -120,9 +126,8 @@ public class LoggingAspect {
       final String service = joinPoint.getTarget().getClass().getName();
 
       if (logger.isErrorEnabled()) {
-        logger.error(
-          format("\n异常方法:{0},\n方法描述:{1},\n参数:{2},\n异常类:{3},\n异常信息:{4}", method, description,
-            params.toString(), service, e));
+        logger.error(format("\n异常方法:{0},\n方法描述:{1},\n参数:{2},\n异常类:{3},\n异常信息:{4}", method,
+            description, params.toString(), service, e));
       }
     } catch (Exception ex) {
       if (logger.isErrorEnabled()) {
@@ -134,8 +139,10 @@ public class LoggingAspect {
   /**
    * 前置记录
    *
-   * @param joinPoint 切点
-   * @param request   请求
+   * @param joinPoint
+   *          切点
+   * @param request
+   *          请求
    * @return 是否为get请求
    */
   private boolean logBefore(final JoinPoint joinPoint, final HttpServletRequest request) {
@@ -148,7 +155,7 @@ public class LoggingAspect {
       if (isBlank(rip)) {
         rip = request.getHeader(X_FORWARDED_FOR);
       }
-      ip = isNotBlank(rip) ? rip : ip;
+      ip = isNotBlank(rip) ? rip.contains(COMMA) ? rip.split(COMMA)[0] : rip : ip;
       final String uri = request.getRequestURI();
       final String method = request.getMethod();
       final String encoding = request.getCharacterEncoding();
@@ -159,8 +166,8 @@ public class LoggingAspect {
       final MultiValueMap<String, String> httpinfos = new LinkedMultiValueMap();
       while (enums.hasMoreElements()) {
         final String key = enums.nextElement().toString();
-        final List<String> value =
-          Splitter.on(COMMA).trimResults().omitEmptyStrings().splitToList(request.getHeader(key));
+        final List<String> value = Splitter.on(COMMA).trimResults().omitEmptyStrings()
+            .splitToList(request.getHeader(key));
 
         httpinfos.put(key, value);
       }
@@ -189,12 +196,15 @@ public class LoggingAspect {
   /**
    * 参数记录
    *
-   * @param isGet     是为否get方法
-   * @param joinPoint 切点
-   * @param request   请求
+   * @param isGet
+   *          是为否get方法
+   * @param joinPoint
+   *          切点
+   * @param request
+   *          请求
    */
   private void logBegin(final boolean isGet, final JoinPoint joinPoint,
-                        final HttpServletRequest request) {
+      final HttpServletRequest request) {
     try {
       if (isGet) {
         final Map<String, String> httpparams = newHashMap();
@@ -247,7 +257,8 @@ public class LoggingAspect {
   /**
    * 后置记录
    *
-   * @param proJoinPoint 切点
+   * @param proJoinPoint
+   *          切点
    * @return 方法执行结果
    */
   private Object logEnd(final ProceedingJoinPoint proJoinPoint) throws Throwable {
@@ -263,13 +274,15 @@ public class LoggingAspect {
   /**
    * 记录http请求信息
    *
-   * @param uri       请求url
-   * @param httpinfos 请求信息
+   * @param uri
+   *          请求url
+   * @param httpinfos
+   *          请求信息
    */
   private void logHttpInfos(String uri, MultiValueMap<String, String> httpinfos) {
     if (logger.isInfoEnabled()) {
-      final StringBuilder msg =
-        new StringBuilder("\n").append(repeat(LINE, 100)).append("\nThe HTTP Request is: \n");
+      final StringBuilder msg = new StringBuilder("\n").append(repeat(LINE, 100)).append(
+          "\nThe HTTP Request is: \n");
 
       httpinfos.entrySet().forEach(entry -> {
         msg.append(entry.getKey()).append(COLON).append(SPACE);
@@ -282,7 +295,7 @@ public class LoggingAspect {
       });
 
       msg.append(REQUEST_URI).append(COLON).append(SPACE).append(uri).append("\n")
-        .append(repeat(LINE, 100));
+          .append(repeat(LINE, 100));
       logger.info(msg.toString());
     }
   }
@@ -290,14 +303,15 @@ public class LoggingAspect {
   /**
    * 记录http请求参数
    *
-   * @param httpparams 请求参数
+   * @param httpparams
+   *          请求参数
    */
   private void logHttpParams(Map<String, String> httpparams) {
     if (logger.isInfoEnabled()) {
       final StringBuilder msg = new StringBuilder("\n").append(repeat(LINE, 100))
-        .append("\nThe contents of request body is: \n")
+          .append("\nThe contents of request body is: \n")
           .append(toJSONString(httpparams, DisableCheckSpecialChar, PrettyFormat)).append("\n")
-        .append(repeat(LINE, 100));
+          .append(repeat(LINE, 100));
       logger.info(msg.toString());
     }
   }
@@ -305,14 +319,15 @@ public class LoggingAspect {
   /**
    * 记录http请求返回
    *
-   * @param result 响应结果
+   * @param result
+   *          响应结果
    */
   private void logHttpReturn(Object result) {
     if (logger.isInfoEnabled()) {
       final StringBuilder msg = new StringBuilder("\n").append(repeat(LINE, 100))
-        .append("\nThe contents of response body is: \n")
-        .append(toJSONString(result, DisableCheckSpecialChar, PrettyFormat)).append("\n")
-        .append(repeat(LINE, 100));
+          .append("\nThe contents of response body is: \n")
+          .append(toJSONString(result, DisableCheckSpecialChar, PrettyFormat)).append("\n")
+          .append(repeat(LINE, 100));
       logger.info(msg.toString());
     }
   }
@@ -320,7 +335,8 @@ public class LoggingAspect {
   /**
    * 获取切点方法
    *
-   * @param joinPoint 切点
+   * @param joinPoint
+   *          切点
    * @return 切点方法
    */
   private static Method getJoinPointMethod(final JoinPoint joinPoint) {
@@ -331,7 +347,8 @@ public class LoggingAspect {
   /**
    * 获取注解中对方法的描述信息 用于service层注解
    *
-   * @param joinPoint 切点
+   * @param joinPoint
+   *          切点
    * @return 方法描述
    */
   private static String getServiceMthodDescription(final JoinPoint joinPoint) {
@@ -349,7 +366,8 @@ public class LoggingAspect {
   /**
    * 获取注解中对方法的描述信息 用于Controller层注解
    *
-   * @param joinPoint 切点
+   * @param joinPoint
+   *          切点
    * @return 方法描述
    */
   private static String getControllerMethodDescription(final JoinPoint joinPoint) {

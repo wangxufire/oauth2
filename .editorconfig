@@ -22,3 +22,6 @@ trim_trailing_whitespace = false
 [{package,bower}.json]
 indent_style = space
 indent_size = 2
+
+[*.bat]
+end_of_line = crlf

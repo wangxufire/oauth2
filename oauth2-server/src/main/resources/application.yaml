@@ -16,10 +16,12 @@ server: # Server Settings (ServerProperties)
   error:
     whitelabel:
       enabled: true
+    include-stacktrace: on-trace-param
   compression:
     enabled: true
     min-response-size: 256
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,text/javascript,application/javascript
+  use-forward-headers: true
 
 app:
   admin:
@@ -68,7 +70,7 @@ spring:
     name: Heading OAuth2 Server
     index: oauth2
   profiles:
-    active: dev # dev/prod/log/unsafe
+    active: @activeProfile@ # dev/prod/log/unsafe
   data:
     mongodb:
       uri: mongodb://auth:auth@172.17.2.71:27017/oauth2
@@ -85,6 +87,8 @@ spring:
 #    type: ehcache
 #    ehcache:
 #      config: classpath:META-INF/cache/ehcache.xml
+  messages:
+    fallback-to-system-locale: true
   devtools:
     livereload:
       enabled: true
