@@ -4,7 +4,6 @@ import static com.hd123.oauth2.common.AuthoritiesConstants.ADMIN;
 import static com.hd123.oauth2.common.AuthoritiesConstants.USER;
 import static com.hd123.oauth2.common.HttpMediaType.APPLICATION_JSON_VALUE_UTF_8;
 import static com.hd123.oauth2.controller.service.UserController.SERVICE_PATH;
-import static com.hd123.oauth2.support.ExceptionCode.ok;
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -26,24 +25,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.hd123.oauth2.controller.BaseController;
+import com.hd123.oauth2.controller.AbstractController;
 import com.hd123.oauth2.entity.User;
 import com.hd123.oauth2.exception.AuthServiceException;
 import com.hd123.oauth2.logger.ControllerLogger;
-import com.hd123.oauth2.rest.RsResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
  * 用户业务转发
- * 
+ *
  * @author liyue
  */
 @RestController
 @Api(tags = "用户信息接口")
 @RequestMapping(path = SERVICE_PATH, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE_UTF_8)
-public class UserController extends BaseController {
+public class UserController extends AbstractController {
 
   protected static final String SERVICE_PATH = PATH + "user";
 
@@ -51,8 +49,8 @@ public class UserController extends BaseController {
   @ControllerLogger("用户登录")
   @ApiOperation(value = "用户登录")
   @RequestMapping(path = "/login", method = POST)
-  public org.springframework.security.core.userdetails.User login(@Valid @RequestBody User user, HttpServletResponse response)
-      throws AuthServiceException {
+  public org.springframework.security.core.userdetails.User login(@Valid @RequestBody User user,
+      HttpServletResponse response) throws AuthServiceException {
     return userService.login(user, response);
   }
 
@@ -60,9 +58,8 @@ public class UserController extends BaseController {
   @ControllerLogger("用户登出")
   @ApiOperation(value = "用户登出")
   @RequestMapping(path = "/logout", method = GET)
-  public RsResponse logout() throws AuthServiceException {
+  public void logout() throws AuthServiceException {
     userService.logout();
-    return new RsResponse(ok);
   }
 
   @PreAuthorize(ADMIN)
@@ -78,9 +75,8 @@ public class UserController extends BaseController {
   @ControllerLogger("新增用户")
   @ApiOperation(value = "新增用户")
   @RequestMapping(path = "/create", method = POST)
-  public RsResponse create(@Valid @RequestBody User user) throws AuthServiceException {
+  public void create(@Valid @RequestBody User user) throws AuthServiceException {
     userService.create(user);
-    return new RsResponse(ok);
   }
 
   @PreAuthorize(USER)
@@ -95,24 +91,22 @@ public class UserController extends BaseController {
   @ControllerLogger("更新用户信息")
   @ApiOperation(value = "更新用户信息")
   @RequestMapping(path = "/update", method = POST)
-  public RsResponse update(@Valid @RequestBody User user) throws AuthServiceException {
+  public void update(@Valid @RequestBody User user) throws AuthServiceException {
     userService.update(user);
-    return new RsResponse(ok);
   }
 
   @PreAuthorize(USER)
   @ControllerLogger("删除用户")
   @ApiOperation(value = "删除用户")
   @RequestMapping(path = "/delete/{id}", method = DELETE)
-  public RsResponse delete(@PathVariable("id") ObjectId id) throws AuthServiceException {
+  public void delete(@PathVariable("id") ObjectId id) throws AuthServiceException {
     userService.delete(id);
-    return new RsResponse(ok);
   }
 
   @PreAuthorize(USER)
   @ControllerLogger("修改用户密码")
   @ApiOperation(value = "修改用户密码")
-  @RequestMapping(path = "/{id}/modifyPassword", method = POST)
+  @RequestMapping(path = "/modifyPassword/{id}", method = POST)
   public String modifyPassword(@PathVariable("id") ObjectId id, String newPassword,
       RedirectAttributes redirectAttributes) throws AuthServiceException {
     userService.modifyPassword(id, newPassword);

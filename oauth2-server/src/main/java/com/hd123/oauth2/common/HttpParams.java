@@ -31,6 +31,7 @@ public final class HttpParams {
   public static final String USER_AGENT = "User-Agent";
   public static final String DATE_HEADER = "Date";
   public static final String SERVER_HEADER = "Server";
+  public static final String XAUTH_TOKEN_HEADER_NAME = "x-auth-token";
 
   public static final String ENCODING = "encoding";
   public static final String HTTP_METHOD = "http-method";
@@ -45,6 +46,12 @@ public final class HttpParams {
   public static final String STATUS_CODE = "javax.servlet.error.status_code";
   public static final String HTTP11_PROTOCOL = "http/1.1";
   public static final String HTTP2_PROTOCOL = "http/2";
+
+  public static final String PRAGMA = "Pragma";
+  public static final String NO_STORE = "no-store";
+  public static final String NO_CACHE = "no-cache";
+  public static final String NO_CACHE_STORE = "no-cache, no-store";
+  public static final String CACHE_CONTROL = "Cache-Control";
 
   public static final String PROTOCOL_CONTENT_CHARSET = "http.protocol.content-charset";
 

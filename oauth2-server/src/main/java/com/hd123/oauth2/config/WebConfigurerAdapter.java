@@ -24,10 +24,13 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.hd123.oauth2.common.HttpMediaType.APPLICATION_JSON_UTF_8;
 import static com.hd123.oauth2.common.HttpMediaType.TEXT_XML_VALUE_UTF_8;
+import static com.hd123.oauth2.common.HttpParams.CONTENT_TYPE;
 import static com.hd123.oauth2.common.ProfileConstants.PRODUCTION;
 import static com.hd123.oauth2.util.DateUtil.I18N_DATE_FORMAT;
+import static java.time.Clock.systemUTC;
 import static java.util.EnumSet.of;
 import static java.util.TimeZone.getDefault;
+import static java.util.concurrent.TimeUnit.DAYS;
 import static javax.servlet.DispatcherType.ASYNC;
 import static javax.servlet.DispatcherType.FORWARD;
 import static javax.servlet.DispatcherType.REQUEST;
@@ -35,6 +38,12 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_SUPPORT;
 import static org.springframework.boot.context.embedded.MimeMappings.DEFAULT;
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.OPTIONS;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.io.IOException;
@@ -67,14 +76,15 @@ import org.springframework.context.annotation.Role;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -105,12 +115,6 @@ public class WebConfigurerAdapter {
     return new WebMvcConfigurerAdapter() {
 
       @Override
-      public void addInterceptors(InterceptorRegistry registry) {
-        // 可以通过此方法添加拦截器, 可以是spring提供的或者自己添加的
-        registry.addInterceptor(new AccessKeyInterceptor()).addPathPatterns("/api/**");
-      }
-
-      @Override
       public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         // 在此处定制全局JsonMapper,有需要也可定制XmlMapper(MappingJackson2XmlHttpMessageConverter)
         converters
@@ -131,12 +135,14 @@ public class WebConfigurerAdapter {
                       ObjectId.class, objectIdSerializer()).addDeserializer(ObjectId.class,
                       objectIdDeserializer()));
                   objectMapper.setSerializationInclusion(NON_NULL);
+                  if (profileUtil.isDev()) {
+                    objectMapper.configure(INDENT_OUTPUT, true);
+                  }
                   objectMapper.configure(WRITE_DATES_AS_TIMESTAMPS, false);
                   objectMapper.configure(WRITE_ENUMS_USING_TO_STRING, true);
                   objectMapper.configure(WRITE_NULL_MAP_VALUES, false);
                   objectMapper.configure(WRITE_EMPTY_JSON_ARRAYS, true);
                   objectMapper.configure(FAIL_ON_EMPTY_BEANS, false);
-                  objectMapper.configure(INDENT_OUTPUT, true);
                   objectMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
                   objectMapper.configure(USE_JAVA_ARRAY_FOR_JSON_ARRAY, true);
                   objectMapper.configure(FAIL_ON_READING_DUP_TREE_KEY, true);
@@ -192,6 +198,18 @@ public class WebConfigurerAdapter {
       }
 
       @Override
+      public void addInterceptors(InterceptorRegistry registry) {
+        // registry.addInterceptor(new
+        // AccessKeyInterceptor()).addPathPatterns("/api/**");
+      }
+
+      @Override
+      public void configurePathMatch(PathMatchConfigurer configurer) {
+        // 定制uri
+        // configurer.setUseSuffixPatternMatch(false).setUseTrailingSlashMatch(true);
+      }
+
+      @Override
       public void configureViewResolvers(ViewResolverRegistry registry) {
       }
 
@@ -203,69 +221,86 @@ public class WebConfigurerAdapter {
       public void addViewControllers(ViewControllerRegistry registry) {
       }
 
-      @Override
-      public void configurePathMatch(PathMatchConfigurer configurer) {
-        // 定制uri
-        // configurer.setUseSuffixPatternMatch(false).setUseTrailingSlashMatch(true);
-      }
-
       /**
        * 访问拦截器
        *
        * @author liyue
        */
-      final class AccessKeyInterceptor extends HandlerInterceptorAdapter {
-
-        @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-            Object handler) throws Exception {
-          // ~ 允许跨域请求, 部分IE无效
-
-          // 表明它允许所有("http://foo.org")发起跨域请求
-          response.addHeader("Access-Control-Allow-Origin", "*");
-          // 表明它允许跨域请求包含content-type头
-          response.addHeader("Access-Control-Allow-Headers", "Content-Type");
-          // 表明它允许GET、PUT、DELETE的外域请求
-          response.addHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
-          // 表明在30秒内，不需要再发送预检验请求，可以缓存该结果
-          response.addHeader("Access-Control-Max-Age", "3600");
-
-          return super.preHandle(request, response, handler);
-        }
-
-        /**
-         * This implementation is empty.
-         */
-        @Override
-        public void postHandle(HttpServletRequest request, HttpServletResponse response,
-            Object handler, ModelAndView modelAndView) throws Exception {
-
-          super.postHandle(request, response, handler, modelAndView);
-        }
-
-        /**
-         * This implementation is empty.
-         */
-        @Override
-        public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-            Object handler, Exception ex) throws Exception {
-
-          super.afterCompletion(request, response, handler, ex);
-        }
-
-        /**
-         * This implementation is empty.
-         */
-        @Override
-        public void afterConcurrentHandlingStarted(HttpServletRequest request,
-            HttpServletResponse response, Object handler) throws Exception {
-
-          super.afterConcurrentHandlingStarted(request, response, handler);
-        }
-
-      }
+      // final class AccessKeyInterceptor extends HandlerInterceptorAdapter {
+      //
+      // @Override
+      // public boolean preHandle(HttpServletRequest request,
+      // HttpServletResponse response,
+      // Object handler) throws Exception {
+      // // ~ 允许跨域请求, 部分IE无效
+      //
+      // // 表明它允许所有("http://foo.org")发起跨域请求
+      // response.addHeader("Access-Control-Allow-Origin", "*");
+      // // 表明它允许跨域请求包含content-type头
+      // response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+      // // 表明它允许GET、PUT、DELETE的外域请求
+      // response.addHeader("Access-Control-Allow-Methods",
+      // "POST, GET, PUT, DELETE, OPTIONS");
+      // // 表明在30秒内，不需要再发送预检验请求，可以缓存该结果
+      // response.addHeader("Access-Control-Max-Age", "3600");
+      //
+      // return super.preHandle(request, response, handler);
+      // }
+      //
+      // /**
+      // * This implementation is empty.
+      // */
+      // @Override
+      // public void postHandle(HttpServletRequest request, HttpServletResponse
+      // response,
+      // Object handler, ModelAndView modelAndView) throws Exception {
+      //
+      // super.postHandle(request, response, handler, modelAndView);
+      // }
+      //
+      // /**
+      // * This implementation is empty.
+      // */
+      // @Override
+      // public void afterCompletion(HttpServletRequest request,
+      // HttpServletResponse response,
+      // Object handler, Exception ex) throws Exception {
+      //
+      // super.afterCompletion(request, response, handler, ex);
+      // }
+      //
+      // /**
+      // * This implementation is empty.
+      // */
+      // @Override
+      // public void afterConcurrentHandlingStarted(HttpServletRequest request,
+      // HttpServletResponse response, Object handler) throws Exception {
+      //
+      // super.afterConcurrentHandlingStarted(request, response, handler);
+      // }
+      //
+      // }
     };
 
+  }
+
+  @Bean
+  @Role(ROLE_INFRASTRUCTURE)
+  public CorsFilter corsFilter() {
+    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    final CorsConfiguration config = new CorsConfiguration();
+    config.setMaxAge(3600L);
+    config.addAllowedOrigin("*");
+    config.addAllowedHeader(CONTENT_TYPE);
+    config.setAllowedMethods(newArrayList(POST.name(), GET.name(), PUT.name(), DELETE.name(),
+        PATCH.name(), OPTIONS.name()));
+    if (config.getAllowedOrigins() != null && !config.getAllowedOrigins().isEmpty()) {
+      source.registerCorsConfiguration("/api/**", config);
+      source.registerCorsConfiguration("/token", config);
+      source.registerCorsConfiguration("/check", config);
+      source.registerCorsConfiguration("/v2/api-docs", config);
+    }
+    return new CorsFilter(source);
   }
 
   @Bean
@@ -274,6 +309,7 @@ public class WebConfigurerAdapter {
   public ServletContextInitializer servlet() {
     return servletContext -> {
       final EnumSet<DispatcherType> disps = of(REQUEST, FORWARD, ASYNC);
+      initCachingHttpHeadersFilter(servletContext, disps);
       initStaticResourcesProductionFilter(servletContext, disps);
     };
   }
@@ -293,8 +329,21 @@ public class WebConfigurerAdapter {
     staticResourcesProductionFilter.setAsyncSupported(true);
   }
 
-  @Bean
-  @Role(ROLE_INFRASTRUCTURE)
+  /**
+   * Initializes the caching HTTP Headers Filter.
+   */
+  private void initCachingHttpHeadersFilter(ServletContext servletContext,
+      EnumSet<DispatcherType> disps) {
+    final Dynamic cachingHttpHeadersFilter = servletContext.addFilter("cachingHttpHeadersFilter",
+        new CachingHttpHeadersFilter());
+
+    cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/dist/assets/*");
+    cachingHttpHeadersFilter.addMappingForUrlPatterns(disps, true, "/dist/scripts/*");
+    cachingHttpHeadersFilter.setAsyncSupported(true);
+  }
+
+  // @Bean
+  // @Role(ROLE_INFRASTRUCTURE)
   public EmbeddedServletContainerCustomizer dispatcherServletCustomizer() {
     return container -> {
       final MimeMappings mappings = new MimeMappings(DEFAULT);
@@ -335,6 +384,42 @@ public class WebConfigurerAdapter {
     @Override
     public void destroy() {
       // Nothing to destroy
+    }
+
+  }
+
+  /**
+   * This filter put HTTP cache headers with a long (1 month) expiration time.
+   */
+  final class CachingHttpHeadersFilter implements Filter {
+
+    // We consider the last modified date is the start up time of the server
+    private final long LAST_MODIFIED = systemUTC().millis();
+
+    private final long CACHE_TIME_TO_LIVE = DAYS.toMillis(31L);
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+      // Nothing to initialize
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
+      final HttpServletResponse httpResponse = (HttpServletResponse) response;
+      httpResponse.setHeader("Cache-Control", "max-age=" + CACHE_TIME_TO_LIVE + ", public");
+      httpResponse.setHeader("Pragma", "cache");
+      // Setting Expires header, for proxy caching
+      httpResponse.setDateHeader("Expires", CACHE_TIME_TO_LIVE + systemUTC().millis());
+      // Setting the Last-Modified header, for browser caching
+      httpResponse.setDateHeader("Last-Modified", LAST_MODIFIED);
+
+      chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+      // Nothing to initialize
     }
 
   }

@@ -155,32 +155,14 @@ public class AppProperties implements InitializingBean {
 
   public static class Jwt {
 
-    private String keyPassword;
-    private String keyPath;
-    private String alias;
+    private int expireIn;
 
-    public String getKeyPassword() {
-      return keyPassword;
+    public int getExpireIn() {
+      return expireIn;
     }
 
-    public void setKeyPassword(String keyPassword) {
-      this.keyPassword = keyPassword;
-    }
-
-    public String getKeyPath() {
-      return keyPath;
-    }
-
-    public void setKeyPath(String keyPath) {
-      this.keyPath = keyPath;
-    }
-
-    public String getAlias() {
-      return alias;
-    }
-
-    public void setAlias(String alias) {
-      this.alias = alias;
+    public void setExpireIn(int expireIn) {
+      this.expireIn = expireIn;
     }
 
   }

@@ -125,6 +125,12 @@
           controller: 'accessTokenController',
           templateUrl: 'scripts/view/auth/token.html'
         }
+      )
+      .state('docs',
+        {
+          url: '/docs',
+          templateUrl: 'scripts/view/doc/docs.html'
+        }
       );
 
     $urlRouterProvider.otherwise('user');
@@ -135,7 +141,7 @@
           config.headers = config.headers || {};
           var token = $rootScope.getUser().token;
           if (token) {
-            config.headers.Authorization = 'Bearer ' + token;
+            config.headers['X-Auth-Token'] = token;
           }
           return config || $q.state(config);
         },

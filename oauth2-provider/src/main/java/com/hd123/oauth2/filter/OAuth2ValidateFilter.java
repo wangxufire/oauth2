@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletResponse;
  *    servlet3.0以上版本可继承该filter并使用{@link javax.servlet.annotation.WebFilter}注解添加filter,
  *    安全性较暴露在web.xml要高
  * </pre>
- * 
+ *
  * @author liyue
  * @since 0.0.5
  */
@@ -113,7 +113,8 @@ public class OAuth2ValidateFilter implements Filter {
       }
 
       final Map<String, String> validate = checkAccessToken(uri, accessToken, oauth2ValidateUrl);
-      if (Integer.valueOf(validate.get(CODE)).intValue() != SC_OK) {
+      final String code = validate.get(CODE);
+      if (isBlank(code) || Integer.valueOf(code).intValue() != SC_OK) {
         final StringBuilder errorBuilder = new StringBuilder("Bearer realm=").append(realm)
             .append(", error=unauthorized, error_description=").append(validate.get(MESSAGE));
         res.setStatus(SC_UNAUTHORIZED);

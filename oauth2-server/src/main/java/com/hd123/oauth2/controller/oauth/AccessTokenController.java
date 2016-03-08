@@ -1,10 +1,9 @@
 package com.hd123.oauth2.controller.oauth;
 
-import static com.hd123.oauth2.as.Common.OAuth2.CACHE_CONTROL;
-import static com.hd123.oauth2.as.Common.OAuth2.NO_STORE;
-import static com.hd123.oauth2.as.Common.OAuth2.PRAGMA;
 import static com.hd123.oauth2.common.HttpMediaType.APPLICATION_JSON_VALUE_UTF_8;
-import static com.hd123.oauth2.common.HttpMediaType.APPLICATION_URLENCODED_VALUE_UTF_8;
+import static com.hd123.oauth2.common.HttpParams.CACHE_CONTROL;
+import static com.hd123.oauth2.common.HttpParams.NO_CACHE_STORE;
+import static com.hd123.oauth2.common.HttpParams.PRAGMA;
 import static com.hd123.oauth2.controller.oauth.AccessTokenController.SERVICE_PATH;
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hd123.oauth2.controller.BaseController;
+import com.hd123.oauth2.controller.AbstractController;
 import com.hd123.oauth2.exception.AuthServiceException;
 import com.hd123.oauth2.logger.ControllerLogger;
 import com.hd123.oauth2.rest.AccessToken;
@@ -40,7 +39,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(tags = "access_token相关接口")
 @RequestMapping(path = SERVICE_PATH, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE_UTF_8)
-public class AccessTokenController extends BaseController {
+public class AccessTokenController extends AbstractController {
 
   protected static final String SERVICE_PATH = PATH;
 
@@ -59,8 +58,7 @@ public class AccessTokenController extends BaseController {
   @PermitAll
   @ControllerLogger("通过appid及appSecret获取access_token")
   @ApiOperation(value = "通过appid及appSecret获取access_token")
-  @RequestMapping(path = "/token", method = {
-      GET, POST }, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE_UTF_8)
+  @RequestMapping(path = "/token", method = GET)
   public AccessToken fetchTokenByClientMode(HttpServletRequest request) throws AuthServiceException {
     return oAuthService.fetchTokenWithClientMode(request);
   }
@@ -77,13 +75,11 @@ public class AccessTokenController extends BaseController {
   @PermitAll
   @ControllerLogger("通过授权码获取access_token")
   @ApiOperation(value = "通过授权码获取access_token")
-  @RequestMapping(path = "/accessToken", consumes = APPLICATION_URLENCODED_VALUE_UTF_8,
-      produces = APPLICATION_JSON_VALUE_UTF_8, method = POST)
+  @RequestMapping(path = "/accessToken", method = POST)
   public AccessToken fetchTokenByAuthCodeMode(HttpServletRequest request)
       throws AuthServiceException {
     return oAuthService.fetchTokenWithClientMode(request);
   }
-
 
   /**
    * 验证accessToken
@@ -103,7 +99,6 @@ public class AccessTokenController extends BaseController {
     return oAuthService.checkAccessToken(request);
   }
 
-
   /**
    * 禁止缓存
    *
@@ -112,8 +107,8 @@ public class AccessTokenController extends BaseController {
    */
   @ModelAttribute
   private void noCache(HttpServletResponse response) {
-    response.addHeader(PRAGMA, NO_STORE);
-    response.addHeader(CACHE_CONTROL, NO_STORE);
+    response.addHeader(PRAGMA, NO_CACHE_STORE);
+    response.addHeader(CACHE_CONTROL, NO_CACHE_STORE);
   }
 
 }

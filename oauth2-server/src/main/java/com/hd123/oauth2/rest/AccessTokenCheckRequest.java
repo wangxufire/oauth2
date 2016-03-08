@@ -17,7 +17,7 @@ public class AccessTokenCheckRequest implements Serializable {
   @NotBlank
   private String uri;
   @NotBlank
-  @JsonProperty(value = "access_token")
+  @JsonProperty("access_token")
   private String accessToken;
 
   public String getUri() {

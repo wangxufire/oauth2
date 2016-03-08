@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hd123.oauth2.controller.BaseController;
+import com.hd123.oauth2.controller.AbstractController;
 import com.hd123.oauth2.entity.User;
 import com.hd123.oauth2.exception.AuthServiceException;
 import com.hd123.oauth2.logger.ControllerLogger;
@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(tags = "授权码相关接口")
 @RequestMapping(path = SERVICE_PATH, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE_UTF_8)
-public class AuthorizeController extends BaseController {
+public class AuthorizeController extends AbstractController {
 
   protected static final String SERVICE_PATH = PATH;
 

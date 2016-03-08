@@ -19,6 +19,7 @@ public final class OAuth2Constant {
   public static final String REQUEST_METHOD = "POST";
   public static final String ENCODING = "UTF-8";
   public static final String INTERFACE_URI = "uri";
+  public static final String TLS = "TLS";
   public static final String HTTPS_PROTOCOL = "https";
   public static final String CONTENT_TYPE = "Content-Type";
   public static final String MEDIA_TYPE = "application/json; charset=UTF-8";

@@ -2,6 +2,7 @@ package com.hd123.oauth2.service.impl;
 
 import static com.alibaba.fastjson.JSON.parseObject;
 import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Sets.newHashSet;
 import static com.hd123.oauth2.entity.App.State.audited;
 import static com.hd123.oauth2.entity.App.State.auditing;
 import static com.hd123.oauth2.support.ExceptionCode.accessTokenOutOfDate;
@@ -20,9 +21,10 @@ import static com.hd123.oauth2.support.ExceptionCode.passwordIncorrect;
 import static com.hd123.oauth2.support.ExceptionCode.unauthorizedAppId;
 import static com.hd123.oauth2.support.ExceptionCode.unauthorizedAppSecret;
 import static com.hd123.oauth2.support.ExceptionCode.usernameNotExist;
-import static com.hd123.oauth2.util.DateUtil.date2Timestamp;
 import static com.hd123.oauth2.util.DateUtil.nowTimestamp;
-import static com.hd123.oauth2.util.TokenUtil.parseOAuth2Token;
+import static com.hd123.oauth2.util.TokenUtil.BEARER;
+import static com.hd123.oauth2.util.TokenUtil.generateOauth2Token;
+import static com.hd123.oauth2.util.TokenUtil.parseOauth2Token;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -45,6 +47,7 @@ import static org.springframework.util.Assert.notNull;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,8 +62,8 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
+import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.context.annotation.Role;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 import com.hd123.oauth2.as.request.OAuth2ClientRequest;
@@ -74,22 +77,16 @@ import com.hd123.oauth2.rest.RsResponse;
 import com.hd123.oauth2.service.AppService;
 import com.hd123.oauth2.service.OAuthService;
 import com.hd123.oauth2.service.UserService;
+import com.hd123.oauth2.util.TokenUtil.Jwt;
 
 @Role(ROLE_APPLICATION)
 @Service(value = "oAuthService")
-public class OAuthServiceImpl extends BaseService implements OAuthService {
-
-  private volatile Cache cache;
+public class OAuthServiceImpl extends AbstractService implements OAuthService {
 
   @Autowired
   private AppService appService;
   @Autowired
   private UserService userService;
-
-  // @Autowired
-  // public OAuthServiceImpl(CacheManager cacheManager) {
-  // this.cache = cacheManager.getCache("AuthCache");
-  // }
 
   @Override
   public AccessToken fetchTokenWithClientMode(HttpServletRequest request)
@@ -114,22 +111,29 @@ public class OAuthServiceImpl extends BaseService implements OAuthService {
 
       // 生成Access Token
       Collection<String> scopes = null;
+      final Cache cache = cacheManager.getCache(SCOPE_CACHE);
       // 因申请新的权限导致审核中，则采用原有权限生成token
       if (equal(app.getState(), auditing)) {
-        scopes = parseOAuth2Token(app.getAccessToken());
+        final ValueWrapper valueWrapper = cache.get(appid);
+        if (valueWrapper == null) {
+          scopes = newHashSet();
+        } else {
+          scopes = (Set<String>) valueWrapper.get();
+        }
       } else {
         scopes = app.getScopes();
       }
 
       final int expireIn = appProperties.getOauth2().getAccessTokenExpireIn();
-      final OAuth2AccessToken token = tokenUtil.generateToken(appid, appSecret, expireIn, scopes);
-      final String accessToken = token.getValue();
+      final Jwt jetToken = generateOauth2Token(expireIn, appid, appSecret, scopes);
+      final String accessToken = jetToken.getToken();
       app.setAccessToken(accessToken);
-      app.setExpired(date2Timestamp(token.getExpiration()));
+      app.setExpired(jetToken.getExp());
       appService.updateWithNoCheck(app);
+      cache.put(appid, scopes);
 
       final OAuthResponse response = tokenResponse(SC_OK).setAccessToken(accessToken)
-          .setTokenType(token.getTokenType()).setExpiresIn(String.valueOf(expireIn))
+          .setTokenType(BEARER.trim()).setExpiresIn(String.valueOf(expireIn))
           .setParam(OAUTH_STATE, oauthRequest.getParam(OAUTH_STATE)).buildJSONMessage();
       return parseObject(response.getBody(), AccessToken.class);
     } catch (OAuthProblemException | OAuthSystemException ex) {
@@ -179,26 +183,24 @@ public class OAuthServiceImpl extends BaseService implements OAuthService {
   @ServiceLogger("校验access_token")
   public RsResponse checkAccessToken(AccessTokenCheckRequest request) {
     final String uri = request.getUri();
-    final String accessToken = request.getAccessToken();
-    final App app = appRepository.findDistinctByAccessToken(accessToken);
-    if (app == null) {
+    final String accessToken = request.getUri();
+    final Jwt jwt = parseOauth2Token(accessToken);
+    final Optional<App> opApp = appRepository.findDistinctByAppId(jwt.getAppid());
+    if (!opApp.isPresent()) {
       return new RsResponse(invalidAccessToken.messageOf(accessToken));
+    }
+
+    final App app = opApp.get();
+
+    if (app.getExpired() < nowTimestamp()) {
+      return new RsResponse(accessTokenOutOfDate);
     }
 
     if (!(equal(app.getState(), audited) || equal(app.getState(), auditing))) {
       return new RsResponse(appRegisterIncorrect.messageOf(app.getAppId()));
     }
 
-    try {
-      final OAuth2AccessToken token = tokenUtil.parseToken(accessToken);
-      if (token.isExpired() || app.getExpired() < nowTimestamp()) {
-        return new RsResponse(accessTokenOutOfDate);
-      }
-
-      if (token.getScope().parallelStream().filter(uri::startsWith).collect(toList()).isEmpty()) {
-        return new RsResponse(interfaceAddressUnauthorized.messageOf(uri));
-      }
-    } catch (Exception e) {
+    if (jwt.getScopes().parallelStream().filter(uri::startsWith).collect(toList()).isEmpty()) {
       return new RsResponse(interfaceAddressUnauthorized.messageOf(uri));
     }
 
@@ -315,7 +317,7 @@ public class OAuthServiceImpl extends BaseService implements OAuthService {
    *          username
    */
   private void addAuthCode(String authCode, String username) {
-    cache.put(authCode, username);
+    // Not Used
   }
 
   /**
@@ -327,7 +329,7 @@ public class OAuthServiceImpl extends BaseService implements OAuthService {
    *          username
    */
   private void addAccessToken(String accessToken, String username) {
-    cache.put(accessToken, username);
+    // Not Used
   }
 
   /**
@@ -338,7 +340,8 @@ public class OAuthServiceImpl extends BaseService implements OAuthService {
    * @return username
    */
   private String getUsernameByAuthCode(String authCode) {
-    return (String) cache.get(authCode).get();
+    // Not Used
+    return EMPTY;
   }
 
   /**
@@ -349,7 +352,8 @@ public class OAuthServiceImpl extends BaseService implements OAuthService {
    * @return username
    */
   private String getUsernameByAccessToken(String accessToken) {
-    return (String) cache.get(accessToken).get();
+    // Not Used
+    return EMPTY;
   }
 
   /**
@@ -360,7 +364,8 @@ public class OAuthServiceImpl extends BaseService implements OAuthService {
    * @return isValid
    */
   private Boolean checkAuthCode(String authCode) {
-    return cache.get(authCode) != null;
+    // Not Used
+    return false;
   }
 
 }

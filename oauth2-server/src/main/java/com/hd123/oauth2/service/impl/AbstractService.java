@@ -7,14 +7,14 @@ import static com.hd123.oauth2.util.SecurityUtil.getCurrentUser;
 import static com.hd123.oauth2.util.SecurityUtil.getCurrentUserLogin;
 import static org.apache.logging.log4j.LogManager.getLogger;
 
-import javax.inject.Inject;
-
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+
+import reactor.bus.EventBus;
 
 import com.hd123.oauth2.config.AppProperties;
 import com.hd123.oauth2.exception.AuthServiceException;
@@ -23,16 +23,16 @@ import com.hd123.oauth2.repository.ProductRepository;
 import com.hd123.oauth2.repository.UserRepository;
 import com.hd123.oauth2.repository.specification.SpecificationModify;
 import com.hd123.oauth2.repository.specification.SpecificationQuery;
-import com.hd123.oauth2.util.JwtTokenUtil;
 
 /**
  * 服务基类
  *
  * @author liyue
  */
-@Component(value = "oauth2BaseService")
-public class BaseService {
+abstract class AbstractService {
   protected final Logger logger = getLogger(getClass());
+
+  protected static final String REACTOR_EVENT_BUS = "@eventBus";
 
   @Autowired
   protected AppRepository appRepository;
@@ -47,19 +47,32 @@ public class BaseService {
   protected SpecificationModify specificationModify;
 
   @Autowired
-  protected JwtTokenUtil tokenUtil;
-  @Inject
+  protected CacheManager cacheManager;
+
+  @Autowired
+  protected EventBus eventBus;
+
+  @Autowired
   protected PasswordEncoder passwordEncoder;
   @Autowired
   protected AppProperties appProperties;
 
   /**
-   * 获取当前登录用户
+   * 获取当前登录用户名
    *
-   * @return
+   * @return login
    */
   protected String getCurrentLogin() {
     return getCurrentUserLogin();
+  }
+
+  /**
+   * 获取当前登录用户
+   *
+   * @return User
+   */
+  protected User getCurrentUserDetail() {
+    return getCurrentUser();
   }
 
   /**

@@ -4,7 +4,6 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.hd123.oauth2.service.AppService;
 import com.hd123.oauth2.service.OAuthService;
@@ -16,8 +15,7 @@ import com.hd123.oauth2.service.UserService;
  *
  * @author liyue
  */
-@Component
-public class BaseController {
+public abstract class AbstractController {
 
   protected final Logger logger = getLogger(getClass());
   protected static final String PATH = "/api/";

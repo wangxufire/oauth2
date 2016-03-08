@@ -4,7 +4,6 @@ import static com.hd123.oauth2.common.AuthoritiesConstants.ADMIN;
 import static com.hd123.oauth2.common.AuthoritiesConstants.USER;
 import static com.hd123.oauth2.common.HttpMediaType.APPLICATION_JSON_VALUE_UTF_8;
 import static com.hd123.oauth2.controller.service.ProductController.SERVICE_PATH;
-import static com.hd123.oauth2.support.ExceptionCode.ok;
 import static com.hd123.oauth2.support.ExceptionCode.productNameNotExist;
 import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
@@ -26,11 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hd123.oauth2.controller.BaseController;
+import com.hd123.oauth2.controller.AbstractController;
 import com.hd123.oauth2.entity.Product;
 import com.hd123.oauth2.exception.AuthServiceException;
 import com.hd123.oauth2.logger.ControllerLogger;
-import com.hd123.oauth2.rest.RsResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +41,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @Api(tags = "产品信息接口")
 @RequestMapping(path = SERVICE_PATH, consumes = ALL_VALUE, produces = APPLICATION_JSON_VALUE_UTF_8)
-public class ProductController extends BaseController {
+public class ProductController extends AbstractController {
 
   protected static final String SERVICE_PATH = PATH + "product";
 
@@ -68,9 +66,8 @@ public class ProductController extends BaseController {
   @ControllerLogger("新增产品信息")
   @ApiOperation(value = "新增产品信息")
   @RequestMapping(path = "/create", method = POST)
-  public RsResponse create(@Valid @RequestBody Product product) throws AuthServiceException {
+  public void create(@Valid @RequestBody Product product) throws AuthServiceException {
     productService.create(product);
-    return new RsResponse(ok);
   }
 
   @PreAuthorize(ADMIN)
@@ -97,18 +94,16 @@ public class ProductController extends BaseController {
   @ControllerLogger("更新产品信息")
   @ApiOperation(value = "更新产品信息")
   @RequestMapping(path = "/update", method = POST)
-  public RsResponse update(@Valid @RequestBody Product product) {
+  public void update(@Valid @RequestBody Product product) {
     productService.update(product);
-    return new RsResponse(ok);
   }
 
   @PreAuthorize(ADMIN)
   @ControllerLogger("删除产品信息")
   @ApiOperation(value = "删除产品信息")
   @RequestMapping(path = "/delete/{id}", method = DELETE)
-  public RsResponse delete(@PathVariable("id") ObjectId id) {
+  public void delete(@PathVariable("id") ObjectId id) {
     productService.delete(id);
-    return new RsResponse(ok);
   }
 
 }

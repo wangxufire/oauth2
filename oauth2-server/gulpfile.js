@@ -97,7 +97,7 @@ gulp.task('build', function (cb) {
 
 gulp.task('serve', function () {
   runSequence('install', function () {
-    var baseUri = 'http://127.0.0.1:' + config.apiPort;
+    var baseUri = 'http://localhost:' + config.apiPort;
     // Routes to proxy to the backend. Routes ending with a / will setup
     // a redirect so that if accessed without a trailing slash, will
     // redirect. This is required for some endpoints for proxy-middleware
@@ -109,7 +109,6 @@ gulp.task('serve', function () {
       '/env',
       '/doc',
       '/v2/api-docs',
-      '/swagger-ui',
       '/configuration/security',
       '/configuration/ui',
       '/swagger-resources',

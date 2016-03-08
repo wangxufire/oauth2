@@ -13,13 +13,13 @@ Heading OAth2 Server [![Build Status](https://travis-ci.org/wangxufire/oauth2.sv
 
 ### 资源提供方
 
-　　即提供接口调用的应用，需做以下依赖
+　　即提供接口调用的应用，需做以下依赖(私服)
 > 
 ```xml
 <dependency>
   <groupId>com.hd123.oauth2</groupId>
   <artifactId>oauth2-provider</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.3.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -77,13 +77,14 @@ Heading OAth2 Server [![Build Status](https://travis-ci.org/wangxufire/oauth2.sv
 #### 安装后的基础操作
 
 * 配置文件在 /etc/mongodb.conf 基本配置如下：
->
-> auth=true
-> quiet = true
-> dbpath = /var/lib/mongodb
-> logpath = /var/log/mongodb/mongod.log
-> logappend = true
-> maxConns = 19999
+<pre>
+auth=true
+quiet = true
+dbpath = /var/lib/mongodb
+logpath = /var/log/mongodb/mongod.log
+logappend = true
+maxConns = 19999
+</pre>
 
 * 注释掉授权，启动服务（systemctl start mongodb.service）
 

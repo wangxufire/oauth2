@@ -7,7 +7,6 @@
 
 server: # Server Settings (ServerProperties)
   port: 8180
-  servlet-path: /
   display-name: ${spring.application.name}
   session:
     timeout: 3600 # sec
@@ -19,7 +18,7 @@ server: # Server Settings (ServerProperties)
     include-stacktrace: on-trace-param
   compression:
     enabled: true
-    min-response-size: 256
+    min-response-size: 1
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,text/javascript,application/javascript
   use-forward-headers: true
 
@@ -39,10 +38,7 @@ app:
     key-store-path: META-INF/keystore/jetty.keystore
     key-store-password: headingoauth2
   jwt: # token
-    alias: jwt
-    key-path: META-INF/keystore/jwt.jks
-    key-password: heading
-
+    expire-in: 3600 # sec login expire
   async: # Async Settings
     core-pool-size: 30
     max-pool-size: 50
@@ -78,15 +74,19 @@ spring:
       authentication-database: oauth2
       repositories:
         enabled: true
-
-# ======================================================================================
-# ================ Not Recommended to Modify the following =============================
-# ======================================================================================
-
-#  cache:
-#    type: ehcache
-#    ehcache:
-#      config: classpath:META-INF/cache/ehcache.xml
+  cache:
+    type: redis
+  redis:
+    database: 13
+    host: 172.17.2.71
+    password: madoka
+    port: 6379
+    timeout: 3000
+    pool:
+      max-active: 8
+      max-idle: 8
+      max-wait: 5000
+      min-idle: 0
   messages:
     fallback-to-system-locale: true
   devtools:
@@ -97,6 +97,9 @@ spring:
       exclude: META-INF/maven/**,static/**,public/**,templates/**,**/*Test.class,**/*Tests.class,git.properties
       poll-interval: 500
       quiet-period: 400
+
+banner:
+  location: classpath:META-INF/banner/hdbanner
 
 shell: # remote shell
   auth:

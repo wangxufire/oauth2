@@ -30,7 +30,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,7 +47,7 @@ import org.apache.logging.log4j.Logger;
 @SuppressWarnings("all")
 public final class GeetestLib {
 
-  private static final Logger logger = getLogger(GeetestLib.class);
+  private final Logger logger = getLogger(GeetestLib.class);
 
   /**
    * SDK版本编号

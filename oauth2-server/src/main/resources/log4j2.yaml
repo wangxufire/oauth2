@@ -72,6 +72,8 @@ Configutation:
       level: WARN
     - name: org.springframework.web.servlet.handler
       level: WARN
+    - name: org.eclipse.jetty.server.session
+      level: ERROR
     asyncRoot:
       level: INFO
       AppenderRef:

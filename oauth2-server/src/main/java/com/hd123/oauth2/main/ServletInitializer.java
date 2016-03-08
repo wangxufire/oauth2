@@ -41,7 +41,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import reactor.spring.context.config.EnableReactor;
 
 import com.hd123.oauth2.util.ProfileUtil;
 
@@ -51,8 +51,8 @@ import com.hd123.oauth2.util.ProfileUtil;
  * @author liyue
  */
 @Configuration
+@EnableReactor
 @EnableWebSecurity
-@EnableResourceServer
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableAsync(proxyTargetClass = true, mode = ASPECTJ)
 @EnableCaching(proxyTargetClass = true, mode = ASPECTJ)
@@ -67,7 +67,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
   protected static final String AUTH_PACKAGE = "com.hd123.oauth2";
   protected static final String MONGO_REPOSITORY = "com.hd123.oauth2.repository";
 
-  private static final Logger logger = getLogger(ServletInitializer.class);
+  private static final Logger LOGGER = getLogger(ServletInitializer.class);
 
   @Autowired
   private ProfileUtil profileUtil;
@@ -110,7 +110,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
     final Environment env = appCtx.getEnvironment();
     final boolean isProdProfile = addDefaultProfile(application, source, env);
 
-    if (logger.isInfoEnabled()) {
+    if (LOGGER.isInfoEnabled()) {
       final String port = env.getProperty("server.port");
       final String securePort = env.getProperty("app.tls.port");
       final String externalIp = getLocalHost().getHostAddress();
@@ -123,16 +123,9 @@ public class ServletInitializer extends SpringBootServletInitializer {
       builder.append(repeat("-", 60)).append("\n\tLocal: \thttp://127.0.0.1:{}")
           .append(contextPath).append("\n\tExternal: \thttp://{}:{}").append(contextPath)
           .append("\n\tLocal Secure: \thttps://127.0.0.1:{}").append(contextPath)
-          .append("\n\tExternal Secure: \thttps://{}:{}").append(contextPath).append("\n");
-      if (isProdProfile) {
-        builder.append(repeat("-", 60));
-        logger.info(builder.toString(), port, externalIp, port, securePort, externalIp, securePort);
-      } else {
-        builder.append("\tAPI Documentation: \thttp://127.0.0.1:{}/doc/index.html\n").append(
-            repeat("-", 60));
-        logger.info(builder.toString(), port, externalIp, port, securePort, externalIp, securePort,
-            port);
-      }
+          .append("\n\tExternal Secure: \thttps://{}:{}").append(contextPath).append("\n")
+          .append(repeat("-", 60));
+      LOGGER.info(builder.toString(), port, externalIp, port, securePort, externalIp, securePort);
     }
   }
 
@@ -170,23 +163,23 @@ public class ServletInitializer extends SpringBootServletInitializer {
    */
   @PostConstruct
   public void checkApplicationProfiles() throws IOException {
-    final boolean warnAble = logger.isWarnEnabled();
-    final boolean infoAble = logger.isInfoEnabled();
-    final boolean errorAble = logger.isErrorEnabled();
+    final boolean warnAble = LOGGER.isWarnEnabled();
+    final boolean infoAble = LOGGER.isInfoEnabled();
+    final boolean errorAble = LOGGER.isErrorEnabled();
 
     final Collection<String> profiles = profileUtil.getProfiles();
     if (profiles.size() <= 0) {
       if (warnAble) {
-        logger.warn("No Spring profile configured, running with default configuration");
+        LOGGER.warn("No Spring profile configured, running with default configuration");
       }
     } else {
       if (infoAble) {
-        logger.info("Running with Spring profile(s) : {}", profiles);
+        LOGGER.info("Running with Spring profile(s) : {}", profiles);
       }
 
       if (errorAble) {
         if (profileUtil.isDevAndProd()) {
-          logger
+          LOGGER
               .error("You have misconfigured your application! It should not run with both the 'dev' and 'prod' profiles at the same time.");
         }
       }

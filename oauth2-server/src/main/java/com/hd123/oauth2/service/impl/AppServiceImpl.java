@@ -12,11 +12,11 @@ import static com.hd123.oauth2.util.DateUtil.now;
 import static com.hd123.oauth2.util.StringUtil.generateUuid;
 import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.bson.types.ObjectId.get;
 import static org.springframework.beans.factory.config.BeanDefinition.ROLE_APPLICATION;
 import static org.springframework.util.Assert.hasLength;
 import static org.springframework.util.Assert.notNull;
 
-import java.util.Date;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
@@ -38,7 +38,7 @@ import com.hd123.oauth2.service.AppService;
  */
 @Role(ROLE_APPLICATION)
 @Service(value = "appService")
-public class AppServiceImpl extends BaseService implements AppService {
+public class AppServiceImpl extends AbstractService implements AppService {
 
   @Override
   @ServiceLogger("注册应用")
@@ -50,8 +50,8 @@ public class AppServiceImpl extends BaseService implements AppService {
       throw new AuthServiceException(appNameExist.messageOf(appName));
     }
     final String appId = APPID_PREFIX + generateUuid();
-    final String appSecret = passwordEncoder.encode(new StringBuilder(new ObjectId(new Date())
-        .toHexString()).append(randomAscii(24)).append(generateUuid()).toString());
+    final String appSecret = passwordEncoder.encode(new StringBuilder(get().toHexString())
+        .append(randomAscii(24)).append(generateUuid()).toString());
     app.setAppId(appId);
     app.setAppSecret(JAVA_LETTER_OR_DIGIT.retainFrom(appSecret));
     return appRepository.save(app);
@@ -95,6 +95,7 @@ public class AppServiceImpl extends BaseService implements AppService {
   }
 
   @Override
+  @ServiceLogger("不校验更新应用")
   public void updateWithNoCheck(App app) throws AuthServiceException {
     notNull(app, "app");
     app.setModify(now());

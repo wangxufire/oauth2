@@ -6,15 +6,18 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.hd123.oauth2.entity.App;
 import com.hd123.oauth2.entity.User;
 import com.hd123.oauth2.exception.AuthServiceException;
 
 /**
  * 用户服务接口
- * 
+ *
  * @author liyue
  */
 public interface UserService {
+
+  String UPDATE_LOGIN_EVENT = "updateLoginEvent";
 
   /**
    * 登录
@@ -40,7 +43,7 @@ public interface UserService {
 
   /**
    * 创建用户
-   * 
+   *
    * @param user
    *          user
    * @return User
@@ -62,13 +65,23 @@ public interface UserService {
 
   /**
    * 更新
-   * 
+   *
    * @param user
    *          user
    * @throws AuthServiceException
    *           授权业务异常
    */
   void update(User user) throws AuthServiceException;
+
+  /**
+   * 更新,不校验用户
+   *
+   * @param user
+   *          user
+   * @throws AuthServiceException
+   *           授权业务异常
+   */
+  void updateWithNoCheck(User user) throws AuthServiceException;
 
   /**
    * 删除
@@ -115,7 +128,7 @@ public interface UserService {
 
   /**
    * 修改密码
-   * 
+   *
    * @param id
    *          id
    * @param newPassword

@@ -1,7 +1,7 @@
 package com.hd123.oauth2.util;
 
 import static com.google.common.base.Objects.equal;
-import static com.hd123.oauth2.entity.User.Role.ROLE_ANONYMOUS;
+import static com.hd123.oauth2.common.AuthoritiesConstants.ROLE_ANONYMOUS;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.springframework.security.core.context.SecurityContextHolder.getContext;
@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Utility class for Spring Security.
- * 
+ *
  * @author liyue
  */
 public final class SecurityUtil {
@@ -26,21 +26,12 @@ public final class SecurityUtil {
 
   /**
    * Get the login of the current user.
-   * 
+   *
    * @return userName
    */
   public static String getCurrentUserLogin() {
     final Authentication authentication = getContext().getAuthentication();
-    String userName = EMPTY;
-    if (authentication != null) {
-      if (authentication.getPrincipal() instanceof UserDetails) {
-        userName = ((UserDetails) authentication.getPrincipal()).getUsername();
-      } else if (authentication.getPrincipal() instanceof String) {
-        userName = (String) authentication.getPrincipal();
-      }
-    }
-
-    return userName;
+    return getCurrentUserLogin(authentication);
   }
 
   /**
@@ -48,14 +39,18 @@ public final class SecurityUtil {
    *
    * @return true if the user is authenticated, false otherwise
    */
-  // public static boolean isAuthenticated() {
-  //   final Collection<? extends GrantedAuthority> authorities = getContext().getAuthentication()
-  //       .getAuthorities();
-  //   return authorities == null
-  //       || authorities.parallelStream()
-  //           .filter(authority -> equal(ROLE_ANONYMOUS.name(), authority.getAuthority()))
-  //           .collect(toList()).isEmpty();
-  // }
+  public static boolean isAuthenticated() {
+    final Authentication authentication = getContext().getAuthentication();
+    if (authentication == null) {
+      return false;
+    }
+    final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+    return authorities != null
+        && !authorities.isEmpty()
+        && authorities.parallelStream()
+            .map(authority -> equal(authority.getAuthority(), ROLE_ANONYMOUS)).collect(toList())
+            .size() == 0;
+  }
 
   /**
    * Return the current user, or throws an exception, if the user is not
@@ -65,16 +60,7 @@ public final class SecurityUtil {
    */
   public static User getCurrentUser() {
     final Authentication authentication = getContext().getAuthentication();
-    String userName = EMPTY;
-    if (authentication != null) {
-      if (authentication.getPrincipal() instanceof UserDetails) {
-        userName = ((UserDetails) authentication.getPrincipal()).getUsername();
-      } else if (authentication.getPrincipal() instanceof String) {
-        userName = (String) authentication.getPrincipal();
-      }
-    }
-
-    return new User(userName, EMPTY, authentication.getAuthorities());
+    return new User(getCurrentUserLogin(authentication), EMPTY, authentication.getAuthorities());
   }
 
   /**
@@ -84,7 +70,7 @@ public final class SecurityUtil {
    * The name of this method comes from the isUserInRole() method in the Servlet
    * API
    * </p>
-   * 
+   *
    * @param authority
    * @return isCurrentUserInRole
    */
@@ -98,6 +84,26 @@ public final class SecurityUtil {
     }
 
     return false;
+  }
+
+  /**
+   * 根据authentication获取用户标识
+   *
+   * @param authentication
+   *          authentication
+   * @return userName
+   */
+  private static String getCurrentUserLogin(Authentication authentication) {
+    String userName = EMPTY;
+    if (authentication != null) {
+      if (authentication.getPrincipal() instanceof UserDetails) {
+        userName = ((UserDetails) authentication.getPrincipal()).getUsername();
+      } else if (authentication.getPrincipal() instanceof String) {
+        userName = (String) authentication.getPrincipal();
+      }
+    }
+
+    return userName;
   }
 
 }

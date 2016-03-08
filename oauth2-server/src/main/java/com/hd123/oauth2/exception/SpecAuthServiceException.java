@@ -19,7 +19,12 @@ public class SpecAuthServiceException extends RuntimeException {
 
   private int errorCode = failed.getCode();
 
-  @Deprecated
+  /**
+   * @see #SpecAuthServiceException(ExceptionCode)
+   * @see #SpecAuthServiceException(AuthServiceException)
+   * @throws OperationNotSupportedException
+   *           OperationNotSupportedException
+   */
   public SpecAuthServiceException() throws OperationNotSupportedException {
     throw new OperationNotSupportedException();
   }
@@ -27,6 +32,11 @@ public class SpecAuthServiceException extends RuntimeException {
   public SpecAuthServiceException(ExceptionCode code) {
     super(code.getMessage());
     this.errorCode = code.getCode();
+  }
+
+  public SpecAuthServiceException(AuthServiceException ex) {
+    super(ex.getErrorMsg());
+    this.errorCode = ex.getErrorCode();
   }
 
   /**

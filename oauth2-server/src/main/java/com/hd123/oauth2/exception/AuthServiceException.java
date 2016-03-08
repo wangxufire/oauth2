@@ -9,7 +9,7 @@ import com.hd123.oauth2.support.ExceptionCode;
 
 /**
  * 授权服务异常
- * 
+ *
  * @author liyue
  * @since 0.0.1
  */
@@ -18,7 +18,11 @@ public class AuthServiceException extends Exception {
 
   private int errorCode = failed.getCode();
 
-  @Deprecated
+  /**
+   * @see #AuthServiceException(ExceptionCode code)
+   * @throws OperationNotSupportedException
+   *           OperationNotSupportedException
+   */
   public AuthServiceException() throws OperationNotSupportedException {
     throw new OperationNotSupportedException();
   }
@@ -30,7 +34,7 @@ public class AuthServiceException extends Exception {
 
   /**
    * 获取异常定义
-   * 
+   *
    * @return ExceptionCode
    */
   public ExceptionCode getExceptionCode() {
@@ -47,10 +51,19 @@ public class AuthServiceException extends Exception {
   }
 
   /**
+   * 获取异常信息
+   *
+   * @return 异常信息
+   */
+  public String getErrorMsg() {
+    return getExceptionCode().getMessage();
+  }
+
+  /**
    * 返回 className: code, message，如果message为null，则返回className: code
-   * 
+   *
    * {@link Throwable#toString()}
-   * 
+   *
    * @return 异常信息
    */
   @Override

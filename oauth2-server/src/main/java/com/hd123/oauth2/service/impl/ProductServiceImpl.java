@@ -32,7 +32,7 @@ import com.hd123.oauth2.service.ProductService;
  */
 @Role(ROLE_APPLICATION)
 @Service(value = "productService")
-public class ProductServiceImpl extends BaseService implements ProductService {
+public class ProductServiceImpl extends AbstractService implements ProductService {
 
   @Override
   @ServiceLogger("新增产品信息")

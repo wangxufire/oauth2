@@ -14,6 +14,7 @@ import static com.hd123.oauth2.common.OAuth2Constant.QUOTES;
 import static com.hd123.oauth2.common.OAuth2Constant.REQUEST_METHOD;
 import static com.hd123.oauth2.common.OAuth2Constant.RIGHT_BRACKET;
 import static com.hd123.oauth2.common.OAuth2Constant.SPACE;
+import static com.hd123.oauth2.common.OAuth2Constant.TLS;
 import static java.lang.Character.isWhitespace;
 import static javax.net.ssl.SSLContext.getInstance;
 
@@ -46,6 +47,9 @@ import javax.net.ssl.X509TrustManager;
  * @since 0.1.0
  */
 public final class OAuth2Util {
+
+  private static final X509TrustManager trustManager = new DefaultTrustManager();
+  private static final HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
 
   /**
    * 判断对象是否相等
@@ -105,16 +109,11 @@ public final class OAuth2Util {
       if (HTTPS_PROTOCOL.equals(url.getProtocol())) {
         final HttpsURLConnection connHttps = (HttpsURLConnection) url.openConnection();
         try {
-          final SSLContext ctx = getInstance("TLS");
+          final SSLContext ctx = getInstance(TLS);
           ctx.init(new KeyManager[0], new TrustManager[] {
-            new DefaultTrustManager() }, new SecureRandom());
+            trustManager }, new SecureRandom());
           connHttps.setSSLSocketFactory(ctx.getSocketFactory());
-          connHttps.setHostnameVerifier(new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-              return false; // 默认认证不通过，进行证书校验。
-            }
-          });
+          connHttps.setHostnameVerifier(hostnameVerifier);
         } catch (Exception e) {
           throw new IOException(e);
         }
@@ -124,9 +123,9 @@ public final class OAuth2Util {
       }
 
       conn.setRequestMethod(REQUEST_METHOD);
-      conn.setDoOutput(true);
-      conn.setDoInput(true);
       conn.setRequestProperty(CONTENT_TYPE, MEDIA_TYPE);
+      conn.setDoInput(true);
+      conn.setDoOutput(true);
       conn.connect();
 
       final StringBuilder jsonBuilder = new StringBuilder(LEFT_BRACKET).append(QUOTES);
@@ -187,6 +186,15 @@ public final class OAuth2Util {
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType)
         throws CertificateException {
+    }
+
+  }
+
+  private static class DefaultHostnameVerifier implements HostnameVerifier {
+
+    @Override
+    public boolean verify(String s, SSLSession sslSession) {
+      return false; // 默认认证不通过，进行证书校验。
     }
 
   }

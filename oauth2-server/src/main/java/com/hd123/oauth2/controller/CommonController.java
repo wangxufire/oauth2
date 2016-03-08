@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hd123.oauth2.config.AppProperties;
 import com.hd123.oauth2.config.AppProperties.Info;
+import com.hd123.oauth2.logger.ControllerLogger;
 import com.hd123.oauth2.rest.RsResponse;
 
 /**
@@ -38,7 +39,8 @@ public class CommonController implements ErrorController {
   private AppProperties appProperties;
 
   @ResponseBody
-  @RequestMapping(path = "/info", method = {
+  @ControllerLogger("获取应用信息")
+  @RequestMapping(path = "/appinfo", method = {
       GET, POST })
   public Info info() {
     return appProperties.getInfo();

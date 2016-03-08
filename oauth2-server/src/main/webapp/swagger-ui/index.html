@@ -89,8 +89,7 @@
             authToken = JSON.parse(decodeURIComponent(pair[1])).token;
           }
         });
-        var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization('Authorization',
-          'Bearer ' + authToken, 'header');
+        var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("X-Auth-Token", authToken, "header");
         window.swaggerUi.api.clientAuthorizations.add("key", apiKeyAuth);
       }
 

@@ -6,6 +6,7 @@ import static com.alibaba.fastjson.serializer.SerializerFeature.PrettyFormat;
 import static com.google.common.base.Strings.repeat;
 import static com.hd123.oauth2.support.ExceptionCode.failed;
 import static com.hd123.oauth2.support.ExceptionCode.illegalArgument;
+import static com.hd123.oauth2.support.ExceptionCode.unauthorizedCurrentUser;
 import static com.hd123.oauth2.support.ExceptionCode.unauthorizedCurrentUserToResource;
 import static java.lang.String.format;
 import static org.apache.logging.log4j.LogManager.getLogger;
@@ -50,7 +51,7 @@ import com.hd123.oauth2.util.ProfileUtil;
     Controller.class, RestController.class })
 public class RestExceptionHandler {
 
-  private static final Logger logger = getLogger(RestExceptionHandler.class);
+  private final Logger logger = getLogger(RestExceptionHandler.class);
 
   @Autowired
   private ProfileUtil profileUtil;
@@ -74,8 +75,10 @@ public class RestExceptionHandler {
     final RsResponse response = new RsResponse();
     response.setMessage(ex.getMessage());
 
-    if (ex instanceof AuthServiceException || ex instanceof SpecAuthServiceException) {
+    if (ex instanceof AuthServiceException) {
       response.setErrorCode(((AuthServiceException) ex).getErrorCode());
+    } else if (ex instanceof SpecAuthServiceException) {
+      response.setErrorCode(((SpecAuthServiceException) ex).getErrorCode());
     } else if (ex instanceof IllegalArgumentException || ex instanceof OptionalException
         || ex instanceof MethodArgumentNotValidException
         || ex instanceof ConstraintViolationException
@@ -85,6 +88,9 @@ public class RestExceptionHandler {
     } else if (ex instanceof AccessDeniedException) {
       response.setErrorCode(unauthorizedCurrentUserToResource.getCode());
       response.setMessage(unauthorizedCurrentUserToResource.getMessage());
+    } else if (ex instanceof AuthenticationException) {
+      response.setErrorCode(unauthorizedCurrentUser.getCode());
+      response.setMessage(unauthorizedCurrentUser.getMessage());
     } else {
       response.setErrorCode(failed.getCode());
       response.setMessage(failed.getMessage());

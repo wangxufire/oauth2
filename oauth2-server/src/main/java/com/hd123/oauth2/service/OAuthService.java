@@ -15,9 +15,11 @@ import com.hd123.oauth2.rest.RsResponse;
  */
 public interface OAuthService {
 
+  String SCOPE_CACHE = "ScopeCache";
+
   /**
    * 客户端模式获取access_token
-   * 
+   *
    * @param request
    *          access_token请求
    * @return AccessToken
@@ -57,6 +59,6 @@ public interface OAuthService {
    *          验证请求
    * @return RsResponse
    */
-  RsResponse checkAccessToken(AccessTokenCheckRequest request) ;
+  RsResponse checkAccessToken(AccessTokenCheckRequest request);
 
 }

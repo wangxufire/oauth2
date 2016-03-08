@@ -39,10 +39,8 @@
     };
 
     $scope.signout = function () {
-      userService.logout().then(function () {
-        $rootScope.removeUser();
-        $state.go('home');
-      });
+      $rootScope.removeUser();
+      $state.go('home');
     };
   });
 

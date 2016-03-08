@@ -72,7 +72,7 @@ import com.google.common.base.Splitter;
 @SuppressWarnings("unchecked")
 public class LoggingAspect {
 
-  private static final Logger logger = getLogger(LoggingAspect.class);
+  private final Logger logger = getLogger(LoggingAspect.class);
 
   /**
    * 环绕通知 用于拦截Controller层记录用户的操作

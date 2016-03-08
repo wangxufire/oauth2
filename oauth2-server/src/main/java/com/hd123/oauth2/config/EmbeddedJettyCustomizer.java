@@ -2,11 +2,12 @@ package com.hd123.oauth2.config;
 
 import static com.google.common.base.Strings.repeat;
 import static com.hd123.oauth2.common.Constants.EQUAL;
-import static com.hd123.oauth2.common.HttpParams.HTTP11_PROTOCOL;
 import static org.apache.logging.log4j.LogManager.getLogger;
+import static org.eclipse.jetty.http.HttpVersion.HTTP_2;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -14,7 +15,6 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
@@ -48,7 +48,7 @@ public class EmbeddedJettyCustomizer implements EmbeddedServletContainerCustomiz
 
   /**
    * Config Jetty Connector
-   * 
+   *
    * @param factory
    *          factory
    */
@@ -76,12 +76,11 @@ public class EmbeddedJettyCustomizer implements EmbeddedServletContainerCustomiz
       https.addCustomizer(new SecureRequestCustomizer());
 
       final ServerConnector sslConnector = new ServerConnector(server, new SslConnectionFactory(
-          sslContextFactory, HTTP11_PROTOCOL), new HttpConnectionFactory(https));
+          sslContextFactory, HTTP_2.asString()), new HttpConnectionFactory(https));
       sslConnector.setPort(appProperties.getTls().getPort());
 
       server.setConnectors(new Connector[] {
           connector, sslConnector });
     });
   }
-
 }

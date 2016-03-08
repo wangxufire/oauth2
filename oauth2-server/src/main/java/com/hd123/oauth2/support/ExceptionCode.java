@@ -1,12 +1,13 @@
 package com.hd123.oauth2.support;
 
 import static com.google.common.base.Objects.equal;
+import static com.hd123.oauth2.support.exceptionevent.ExceptionEventDisruptor.pushExceptionEvent;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * 全局异常代码(没有请自定义)
- * 
+ *
  * @author liyue
  * @since 0.0.1
  */
@@ -111,7 +112,7 @@ public enum ExceptionCode {
 
   /**
    * 异常代码
-   * 
+   *
    * @return 异常代码
    */
   public int getCode() {
@@ -124,7 +125,7 @@ public enum ExceptionCode {
 
   /**
    * 异常信息
-   * 
+   *
    * @return 异常信息
    */
   public String getMessage() {
@@ -150,16 +151,14 @@ public enum ExceptionCode {
       setMessage(format(message, placeholders));
     }
 
-    new Thread(() -> {
-      rebuidMessage(this);
-    }).start();
+    pushExceptionEvent(this);
 
     return this;
   }
 
   /**
    * Return the enum constant of this type with the specified numeric value.
-   * 
+   *
    * @param code
    *          the numeric value of the enum to be returned
    * @return the enum constant with the specified numeric value

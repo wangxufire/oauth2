@@ -14,7 +14,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 /**
  * Returns a 401 error code (Unauthorized) to the client.
- * 
+ *
  * @author liyue
  */
 public class Http401UnauthorizedEntryPoint implements AuthenticationEntryPoint {
@@ -25,8 +25,7 @@ public class Http401UnauthorizedEntryPoint implements AuthenticationEntryPoint {
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException arg2) throws IOException, ServletException {
-
-    final StringBuilder errorBuilder = new StringBuilder("Bearer realm=Heading OAuth2 Server")
+    final StringBuilder errorBuilder = new StringBuilder("Token-Based realm=Heading OAuth2 Server")
         .append(", error=unauthorized, error_description=").append(arg2.getMessage());
     response.setStatus(SC_UNAUTHORIZED);
     response.addHeader(WWW_AUTHENTICATE, errorBuilder.toString());

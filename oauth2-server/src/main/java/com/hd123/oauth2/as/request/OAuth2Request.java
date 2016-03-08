@@ -1,9 +1,10 @@
 package com.hd123.oauth2.as.request;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.hd123.oauth2.as.Common.OAuth2.OAUTH_APP_ID;
-import static com.hd123.oauth2.as.Common.OAuth2.OAUTH_APP_SECRET;
-import static com.hd123.oauth2.as.Common.OAuth2.OAUTH_REDIRECT_URL;
+import static com.hd123.oauth2.as.common.OAuth2.OAUTH_APP_ID;
+import static com.hd123.oauth2.as.common.OAuth2.OAUTH_APP_SECRET;
+import static com.hd123.oauth2.as.common.OAuth2.OAUTH_REDIRECT_URL;
+import static org.apache.logging.log4j.LogManager.getLogger;
 import static org.apache.oltu.oauth2.common.OAuth.HeaderType.AUTHORIZATION;
 import static org.apache.oltu.oauth2.common.OAuth.OAUTH_CLIENT_ID;
 import static org.apache.oltu.oauth2.common.OAuth.OAUTH_CLIENT_SECRET;
@@ -12,27 +13,26 @@ import static org.apache.oltu.oauth2.common.OAuth.OAUTH_SCOPE;
 import static org.apache.oltu.oauth2.common.utils.OAuthUtils.decodeClientAuthenticationHeader;
 import static org.apache.oltu.oauth2.common.utils.OAuthUtils.decodeScopes;
 import static org.apache.oltu.oauth2.common.utils.OAuthUtils.isEmpty;
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.oltu.oauth2.as.request.OAuthRequest;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.validators.OAuthValidator;
-import org.apache.logging.log4j.Logger;
 
 /**
  * The Abstract OAuth request for the Authorization server.
- * 
+ *
  * @author liyue
  */
 abstract class OAuth2Request {
 
-  private static final Logger logger = getLogger(OAuthRequest.class);
+  private final Logger logger = getLogger(OAuthRequest.class);
 
   protected HttpServletRequest request;
   protected OAuthValidator<HttpServletRequest> validator;

@@ -38,7 +38,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 public class AsyncTaskConfig implements AsyncConfigurer {
 
-  private static final Logger logger = getLogger(WrapperAsyncExecutor.class);
+  private final Logger logger = getLogger(WrapperAsyncExecutor.class);
 
   @Autowired
   private AppProperties appProperties;
