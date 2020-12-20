@@ -103,7 +103,7 @@
     <oltu.version>1.0.1</oltu.version>
     <jjwt.version>0.6.0</jjwt.version>
     <kotlin.version>1.0.0</kotlin.version>
-    <fastjson.version>1.2.7</fastjson.version>
+    <fastjson.version>1.2.25.sec10</fastjson.version>
     <disruptor.version>3.3.2</disruptor.version>
     <springfox.version>2.3.1</springfox.version>
 
